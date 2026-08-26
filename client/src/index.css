@@ -1,0 +1,301 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap");
+@import "tailwindcss";
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+
+  color: #1b1b1f;
+
+  font-family: "DM Sans", Arial, Helvetica, sans-serif;
+
+  background:
+    radial-gradient(
+      circle at top right,
+      rgba(217, 48, 37, 0.035),
+      transparent 30%
+    ),
+    linear-gradient(
+      180deg,
+      #ffffff 0%,
+      #f8f8f6 100%
+    );
+
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  overflow-x: hidden;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Outfit", Arial, Helvetica, sans-serif;
+}
+
+::selection {
+  background: #d93025;
+  color: #ffffff;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f3f3f3;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #c7c7c7;
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #d93025;
+}
+
+/* =========================================
+   GLOBAL ANIMATIONS
+========================================= */
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(25px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes softPulse {
+  0%,
+  100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+
+/* =========================================
+   RESPONSIVE FOUNDATION
+========================================= */
+
+.page-container {
+  width: min(100% - 32px, 1400px);
+  margin-inline: auto;
+}
+
+@media (max-width: 640px) {
+  .page-container {
+    width: min(100% - 24px, 1400px);
+  }
+}
+
+/* =========================================
+   PREMIUM HERO
+========================================= */
+
+.hero-orb {
+  position: absolute;
+  border-radius: 999px;
+  filter: blur(10px);
+  pointer-events: none;
+}
+
+.hero-orb-one {
+  top: -180px;
+  right: 8%;
+  width: 420px;
+  height: 420px;
+  background: rgba(220, 38, 38, 0.08);
+  animation: heroOrbFloat 12s ease-in-out infinite;
+}
+
+.hero-orb-two {
+  bottom: -160px;
+  left: 8%;
+  width: 360px;
+  height: 360px;
+  background: rgba(251, 146, 60, 0.07);
+  animation: heroOrbFloat 15s ease-in-out infinite reverse;
+}
+
+.hero-reveal {
+  opacity: 0;
+  animation: heroReveal 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.hero-reveal-delay-1 {
+  animation-delay: 0.12s;
+}
+
+.hero-reveal-delay-2 {
+  animation-delay: 0.24s;
+}
+
+.hero-reveal-delay-3 {
+  animation-delay: 0.36s;
+}
+
+.hero-reveal-delay-4 {
+  animation-delay: 0.48s;
+}
+
+@keyframes heroReveal {
+  from {
+    opacity: 0;
+    transform: translateY(35px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes heroOrbFloat {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+
+  50% {
+    transform: translate(25px, 35px) scale(1.08);
+  }
+}
+
+.hero-shoe-placeholder {
+  animation: heroVisualFloat 6s ease-in-out infinite;
+}
+
+@keyframes heroVisualFloat {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-1.5deg);
+  }
+
+  50% {
+    transform: translateY(-12px) rotate(1deg);
+  }
+}
+
+.hero-floating-card {
+  animation: floatingCard 5s ease-in-out infinite;
+}
+
+@keyframes floatingCard {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.hero-marquee {
+  display: inline-block;
+  min-width: max-content;
+  animation: marqueeMove 28s linear infinite;
+}
+
+@keyframes marqueeMove {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-45%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-reveal,
+  .hero-orb-one,
+  .hero-orb-two,
+  .hero-shoe-placeholder,
+  .hero-floating-card,
+  .hero-marquee {
+    animation: none !important;
+    opacity: 1;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero-floating-card {
+    right: 2%;
+  }
+
+  .hero-orb-one {
+    width: 300px;
+    height: 300px;
+  }
+
+  .hero-orb-two {
+    width: 260px;
+    height: 260px;
+  }
+}
