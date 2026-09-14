@@ -26,6 +26,7 @@ function Header() {
     user,
     logout,
     isAuthenticated,
+    isAdmin,
   } = useContext(AuthContext);
 
   const navigate = useNavigate();
@@ -597,6 +598,19 @@ function Header() {
                     >
                       My Orders
                     </button>
+
+                    {isAdmin && (
+                      <button
+                        onClick={() => {
+                          closeAllMenus();
+                          navigate("/admin");
+                        }}
+                        className="mt-1 flex w-full items-center justify-between rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-left text-sm font-bold text-red-700 transition-all duration-200 hover:border-red-600 hover:bg-red-600 hover:text-white"
+                      >
+                        <span>Admin Panel</span>
+                        <span>→</span>
+                      </button>
+                    )}
 
                   </div>
 

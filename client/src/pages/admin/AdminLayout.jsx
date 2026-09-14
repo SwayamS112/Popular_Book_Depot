@@ -1,5 +1,5 @@
-import { useContext } from "react";
 import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
+import { useContext } from "react";
 import { AuthContext } from "../../context/AuthContext.jsx";
 
 const menuItems = [
@@ -8,6 +8,11 @@ const menuItems = [
     label: "Dashboard",
     icon: "⌂",
     end: true,
+  },
+  {
+    to: "/admin/home",
+    label: "Home Page",
+    icon: "▣",
   },
   {
     to: "/admin/products",
@@ -124,7 +129,8 @@ function AdminLayout() {
             </p>
 
             <p className="mt-2 text-xs leading-5 text-white/60">
-              Manage products, customer orders and store activity from one place.
+              Manage products, customer orders and store activity from one
+              place.
             </p>
           </div>
         </aside>
@@ -135,7 +141,6 @@ function AdminLayout() {
           {/* TOPBAR */}
           <header className="sticky top-0 z-30 flex h-20 items-center justify-between border-b border-zinc-200 bg-[#f6f6f3]/90 px-5 backdrop-blur-xl sm:px-8 lg:px-10">
 
-            {/* Page Title */}
             <div>
               <p className="text-xs font-bold uppercase tracking-[0.2em] text-red-600">
                 Administration
@@ -146,7 +151,6 @@ function AdminLayout() {
               </h1>
             </div>
 
-            {/* Admin Actions */}
             <div className="flex items-center gap-3">
 
               <Link
@@ -160,6 +164,7 @@ function AdminLayout() {
               <div className="group relative">
 
                 <button
+                  type="button"
                   className="flex items-center gap-3 rounded-xl border border-zinc-200 bg-white p-1.5 pr-3 transition hover:border-zinc-300 hover:shadow-sm"
                 >
                   <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-zinc-950 text-sm font-bold text-white">
@@ -179,16 +184,18 @@ function AdminLayout() {
 
                 {/* Dropdown */}
                 <div className="invisible absolute right-0 top-full z-50 mt-2 w-48 translate-y-2 rounded-xl border border-zinc-200 bg-white p-2 opacity-0 shadow-xl transition-all duration-200 group-hover:visible group-hover:translate-y-0 group-hover:opacity-100">
+
                   <Link
-                    to="/profile"
+                    to="/"
                     className="block rounded-lg px-3 py-2.5 text-sm font-medium text-zinc-600 transition hover:bg-zinc-100 hover:text-zinc-950"
                   >
-                    My Profile
+                    View Store
                   </Link>
 
                   <div className="my-1 border-t border-zinc-100" />
 
                   <button
+                    type="button"
                     onClick={handleLogout}
                     className="w-full rounded-lg px-3 py-2.5 text-left text-sm font-semibold text-red-600 transition hover:bg-red-50"
                   >
@@ -209,4 +216,4 @@ function AdminLayout() {
   );
 }
 
-export default AdminLayout;
+export default AdminLayout; 

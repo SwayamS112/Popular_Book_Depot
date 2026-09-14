@@ -6,30 +6,43 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(() => {
     try {
       const savedUser = localStorage.getItem("user");
-      return savedUser ? JSON.parse(savedUser) : null;
+
+      return savedUser
+        ? JSON.parse(savedUser)
+        : null;
     } catch (error) {
-      console.error("Error reading saved user:", error);
+      console.error(
+        "Error reading saved user:",
+        error
+      );
+
       localStorage.removeItem("user");
+
       return null;
     }
   });
 
-  const [token, setToken] = useState(() => {
-    return localStorage.getItem("token") || "";
-  });
+  const [token, setToken] = useState(
+    () => localStorage.getItem("token") || ""
+  );
 
   const [loading, setLoading] = useState(false);
 
-  // Login
   const login = (userData, authToken) => {
-    localStorage.setItem("user", JSON.stringify(userData));
-    localStorage.setItem("token", authToken);
+    localStorage.setItem(
+      "user",
+      JSON.stringify(userData)
+    );
+
+    localStorage.setItem(
+      "token",
+      authToken
+    );
 
     setUser(userData);
     setToken(authToken);
   };
 
-  // Logout
   const logout = () => {
     localStorage.removeItem("user");
     localStorage.removeItem("token");
@@ -39,13 +52,13 @@ export function AuthProvider({ children }) {
     setToken("");
   };
 
-  // Normal authentication check
-  const isAuthenticated = Boolean(user && token);
+  const isAuthenticated =
+    Boolean(user && token);
 
-  // Admin authentication check
   const isAdmin =
     isAuthenticated &&
-    user?.role?.toLowerCase() === "admin";
+    String(user?.role || "").toLowerCase() ===
+      "admin";
 
   return (
     <AuthContext.Provider

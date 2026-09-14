@@ -2,6 +2,7 @@ const express = require("express");
 
 const {
   getProducts,
+  getAdminProducts,
   getProductById,
   createProduct,
   updateProduct,
@@ -14,10 +15,17 @@ const { protectAdmin } = require("../middleware/adminMiddleware");
 
 const router = express.Router();
 
-// Public
+// ==========================================
+// PUBLIC
+// ==========================================
 router.get("/", getProducts);
 
-// Admin
+// ==========================================
+// ADMIN
+// Keep /admin/all before /:id
+// ==========================================
+router.get("/admin/all", protectAdmin, getAdminProducts);
+
 router.post("/", protectAdmin, createProduct);
 
 router.put("/:id", protectAdmin, updateProduct);
@@ -36,7 +44,9 @@ router.put(
   updateVariantPrice
 );
 
-// Single product
+// ==========================================
+// SINGLE PRODUCT - PUBLIC
+// ==========================================
 router.get("/:id", getProductById);
 
 module.exports = router;

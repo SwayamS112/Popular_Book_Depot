@@ -1,13 +1,19 @@
 const Product = require("../models/Product");
-const {isValidProductCategory,} = require("../utils/productCategories");
+const {
+  isValidProductCategory,
+} = require("../utils/productCategories");
 
 // ==========================================
-// HELPER: CHECK IF A PRODUCT HAS ANY STOCK
+// HELPERS
 // ==========================================
 const hasProductStock = (product) => {
   return product.variants.some((variant) =>
     variant.sizes.some((size) => size.stock > 0)
   );
+};
+
+const escapeRegExp = (value = "") => {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 };
 
 // ==========================================
@@ -33,20 +39,12 @@ const getProducts = async (req, res, next) => {
       isActive: true,
     };
 
-    if (section) {
-      filter.section = section.toLowerCase();
-    }
-
-    if (category) {
-      filter.category = category.toLowerCase();
-    }
-
-    if (subcategory) {
-      filter.subcategory = subcategory.toLowerCase();
-    }
+    if (section) filter.section = section.toLowerCase();
+    if (category) filter.category = category.toLowerCase();
+    if (subcategory) filter.subcategory = subcategory.toLowerCase();
 
     if (brand) {
-      filter.brand = new RegExp(`^${brand}$`, "i");
+      filter.brand = new RegExp(`^${escapeRegExp(brand)}$`, "i");
     }
 
     if (featured !== undefined) {
@@ -57,45 +55,96 @@ const getProducts = async (req, res, next) => {
       filter.isNewArrival = newArrival === "true";
     }
 
-    // Collection filtering
-    if (collection === "most-popular") {
-      filter.isPopular = true;
-    }
+    if (collection === "most-popular") filter.isPopular = true;
+    if (collection === "best-sellers") filter.isBestSeller = true;
+    if (collection === "new-arrivals") filter.isNewArrival = true;
 
-    if (collection === "best-sellers") {
-      filter.isBestSeller = true;
-    }
-
-    if (collection === "new-arrivals") {
-      filter.isNewArrival = true;
-    }
-
-    // Price filtering is based on at least one variant
     if (minPrice || maxPrice) {
+      const priceMatch = {};
+
+      if (minPrice) priceMatch.$gte = Number(minPrice);
+      if (maxPrice) priceMatch.$lte = Number(maxPrice);
+
       filter.variants = {
-        $elemMatch: {},
+        $elemMatch: {
+          sellingPrice: priceMatch,
+        },
       };
-
-      if (minPrice) {
-        filter.variants.$elemMatch.sellingPrice = {
-          ...filter.variants.$elemMatch.sellingPrice,
-          $gte: Number(minPrice),
-        };
-      }
-
-      if (maxPrice) {
-        filter.variants.$elemMatch.sellingPrice = {
-          ...filter.variants.$elemMatch.sellingPrice,
-          $lte: Number(maxPrice),
-        };
-      }
     }
 
     const currentPage = Math.max(Number(page), 1);
-
     const itemsPerPage = Math.min(
       Math.max(Number(limit), 1),
       50
+    );
+    const skip = (currentPage - 1) * itemsPerPage;
+
+    const totalProducts = await Product.countDocuments(filter);
+
+    const products = await Product.find(filter)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(itemsPerPage);
+
+    const productsWithStockStatus = products.map((product) => ({
+      ...product.toObject(),
+      inStock: hasProductStock(product),
+    }));
+
+    res.status(200).json({
+      success: true,
+      count: products.length,
+      totalProducts,
+      currentPage,
+      totalPages: Math.ceil(totalProducts / itemsPerPage),
+      products: productsWithStockStatus,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// ==========================================
+// GET ALL PRODUCTS - ADMIN
+// Includes active + inactive products
+// ==========================================
+const getAdminProducts = async (req, res, next) => {
+  try {
+    const {
+      search = "",
+      section,
+      status = "all",
+      page = 1,
+      limit = 100,
+    } = req.query;
+
+    const filter = {};
+
+    if (section && section !== "all") {
+      filter.section = section.toLowerCase();
+    }
+
+    if (status === "active") filter.isActive = true;
+    if (status === "inactive") filter.isActive = false;
+
+    if (search.trim()) {
+      const searchRegex = new RegExp(
+        escapeRegExp(search.trim()),
+        "i"
+      );
+
+      filter.$or = [
+        { name: searchRegex },
+        { brand: searchRegex },
+        { category: searchRegex },
+        { subcategory: searchRegex },
+      ];
+    }
+
+    const currentPage = Math.max(Number(page), 1);
+    const itemsPerPage = Math.min(
+      Math.max(Number(limit), 1),
+      100
     );
 
     const skip = (currentPage - 1) * itemsPerPage;
@@ -107,21 +156,17 @@ const getProducts = async (req, res, next) => {
       .skip(skip)
       .limit(itemsPerPage);
 
-    const productsWithStockStatus = products.map(
-      (product) => ({
-        ...product.toObject(),
-        inStock: hasProductStock(product),
-      })
-    );
+    const productsWithStockStatus = products.map((product) => ({
+      ...product.toObject(),
+      inStock: hasProductStock(product),
+    }));
 
     res.status(200).json({
       success: true,
       count: products.length,
       totalProducts,
       currentPage,
-      totalPages: Math.ceil(
-        totalProducts / itemsPerPage
-      ),
+      totalPages: Math.ceil(totalProducts / itemsPerPage),
       products: productsWithStockStatus,
     });
   } catch (error) {
@@ -178,7 +223,6 @@ const createProduct = async (req, res, next) => {
       isNewArrival,
     } = req.body;
 
-    // Required fields
     if (
       !name ||
       !brand ||
@@ -188,21 +232,13 @@ const createProduct = async (req, res, next) => {
       !variants
     ) {
       res.status(400);
-      throw new Error(
-        "Please provide all required product fields"
-      );
+      throw new Error("Please provide all required product fields");
     }
 
-    const normalizedSection =
-      section.toLowerCase();
+    const normalizedSection = section.toLowerCase();
+    const normalizedCategory = category.toLowerCase();
+    const normalizedSubcategory = subcategory.toLowerCase();
 
-    const normalizedCategory =
-      category.toLowerCase();
-
-    const normalizedSubcategory =
-      subcategory.toLowerCase();
-
-    // Validate section and subcategory
     if (
       !isValidProductCategory(
         normalizedSection,
@@ -215,22 +251,16 @@ const createProduct = async (req, res, next) => {
       );
     }
 
-    // Accessories should always use category "accessories"
     if (
       normalizedSection === "accessories" &&
       normalizedCategory !== "accessories"
     ) {
       res.status(400);
-      throw new Error(
-        "Accessories must use category 'accessories'"
-      );
+      throw new Error("Accessories must use category 'accessories'");
     }
 
-    // Men, women and kids should use category "shoes"
     if (
-      ["men", "women", "kids"].includes(
-        normalizedSection
-      ) &&
+      ["men", "women", "kids"].includes(normalizedSection) &&
       normalizedCategory !== "shoes"
     ) {
       res.status(400);
@@ -239,54 +269,28 @@ const createProduct = async (req, res, next) => {
       );
     }
 
-    // Validate variants
-    if (
-      !Array.isArray(variants) ||
-      variants.length === 0
-    ) {
+    if (!Array.isArray(variants) || variants.length === 0) {
       res.status(400);
-      throw new Error(
-        "At least one product variant is required"
-      );
+      throw new Error("At least one product variant is required");
     }
 
     const product = await Product.create({
       name,
       brand,
-
       section: normalizedSection,
       category: normalizedCategory,
       subcategory: normalizedSubcategory,
-
       description,
       variants,
       returnPolicy,
       returnNote,
-
-      isActive:
-        isActive !== undefined
-          ? isActive
-          : true,
-
-      isFeatured:
-        isFeatured !== undefined
-          ? isFeatured
-          : false,
-
-      isPopular:
-        isPopular !== undefined
-          ? isPopular
-          : false,
-
+      isActive: isActive !== undefined ? isActive : true,
+      isFeatured: isFeatured !== undefined ? isFeatured : false,
+      isPopular: isPopular !== undefined ? isPopular : false,
       isBestSeller:
-        isBestSeller !== undefined
-          ? isBestSeller
-          : false,
-
+        isBestSeller !== undefined ? isBestSeller : false,
       isNewArrival:
-        isNewArrival !== undefined
-          ? isNewArrival
-          : true,
+        isNewArrival !== undefined ? isNewArrival : true,
     });
 
     res.status(201).json({
@@ -311,7 +315,6 @@ const updateProduct = async (req, res, next) => {
       throw new Error("Product not found");
     }
 
-    // Get the final values after the update
     const finalSection =
       req.body.section !== undefined
         ? String(req.body.section).toLowerCase()
@@ -327,7 +330,6 @@ const updateProduct = async (req, res, next) => {
         ? String(req.body.subcategory).toLowerCase()
         : product.subcategory;
 
-    // Validate section and subcategory
     if (
       !isValidProductCategory(
         finalSection,
@@ -340,7 +342,6 @@ const updateProduct = async (req, res, next) => {
       );
     }
 
-    // Accessories must use accessories category
     if (
       finalSection === "accessories" &&
       finalCategory !== "accessories"
@@ -351,7 +352,6 @@ const updateProduct = async (req, res, next) => {
       );
     }
 
-    // Men, women and kids must use shoes category
     if (
       ["men", "women", "kids"].includes(finalSection) &&
       finalCategory !== "shoes"
@@ -376,14 +376,12 @@ const updateProduct = async (req, res, next) => {
       "isNewArrival",
     ];
 
-    // Update normal fields
     allowedFields.forEach((field) => {
       if (req.body[field] !== undefined) {
         product[field] = req.body[field];
       }
     });
 
-    // Update validated category fields
     product.section = finalSection;
     product.category = finalCategory;
     product.subcategory = finalSubcategory;
@@ -399,6 +397,7 @@ const updateProduct = async (req, res, next) => {
     next(error);
   }
 };
+
 // ==========================================
 // DEACTIVATE PRODUCT - ADMIN ONLY
 // ==========================================
@@ -527,9 +526,7 @@ const updateVariantPrice = async (req, res, next) => {
     if (sellingPrice !== undefined) {
       if (Number(sellingPrice) < 0) {
         res.status(400);
-        throw new Error(
-          "Selling price cannot be negative"
-        );
+        throw new Error("Selling price cannot be negative");
       }
 
       variant.sellingPrice = Number(sellingPrice);
@@ -563,6 +560,7 @@ const updateVariantPrice = async (req, res, next) => {
 
 module.exports = {
   getProducts,
+  getAdminProducts,
   getProductById,
   createProduct,
   updateProduct,

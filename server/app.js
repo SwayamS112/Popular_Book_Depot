@@ -8,6 +8,7 @@ const productRoutes = require("./routes/productRoutes");
 const orderRoutes = require("./routes/orderRoutes");
 const homeSectionRoutes = require("./routes/homeSectionRoutes");  
 const kidsSizeGuideRoutes = require("./routes/kidsSizeGuideRoutes");
+const heroSectionRoutes = require("./routes/heroSectionRoutes");
 
 const {
   notFound,
@@ -31,6 +32,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/products", productRoutes);
+app.use("/api/hero-section", heroSectionRoutes);
 app.use("/api/home-sections", homeSectionRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/kids-size-guide", kidsSizeGuideRoutes);

@@ -13,28 +13,41 @@ export const CartContext = createContext();
 const API_URL = "http://localhost:5001/api";
 
 export function CartProvider({ children }) {
-
-  
   const {
     isAuthenticated,
+    isAdmin,
     token,
   } = useContext(AuthContext);
-  
-  // Guest cart
+
+  // =====================================
+  // GUEST / CUSTOMER CART
+  // =====================================
   const [cartItems, setCartItems] = useState(() => {
-    const savedCart =
-    localStorage.getItem("cart");
-    
-    return savedCart
-    ? JSON.parse(savedCart)
-    : [];
+    try {
+      const savedCart = localStorage.getItem("cart");
+
+      return savedCart
+        ? JSON.parse(savedCart)
+        : [];
+    } catch (error) {
+      console.error(
+        "Error reading saved cart:",
+        error
+      );
+
+      localStorage.removeItem("cart");
+
+      return [];
+    }
   });
-  
+
   const [cartLoading, setCartLoading] =
-  useState(false);
-  
-  const previousAuthState = useRef(isAuthenticated);
-  
+    useState(false);
+
+  const previousAuthState = useRef(
+    isAuthenticated
+  );
+
   // =====================================
   // CONVERT BACKEND CART TO FRONTEND CART
   // =====================================
@@ -57,14 +70,12 @@ export function CartProvider({ children }) {
         );
 
         return {
-          // IMPORTANT:
-          // This is the MongoDB Cart item ID
+          // MongoDB Cart item ID
           cartItemId: item._id,
 
           productId: product._id,
 
-          // Backend cart does not require variantId,
-          // but we keep it for frontend compatibility
+          // Kept for frontend compatibility
           variantId: variant?._id || "",
 
           name: product.name,
@@ -99,7 +110,12 @@ export function CartProvider({ children }) {
   // GET BACKEND CART
   // =====================================
   const fetchCart = async () => {
-    if (!token) return;
+    // Admin accounts do not have a customer
+    // MongoDB cart, so NEVER call /api/cart
+    // for admin.
+    if (!isAuthenticated || isAdmin || !token) {
+      return;
+    }
 
     try {
       setCartLoading(true);
@@ -138,34 +154,48 @@ export function CartProvider({ children }) {
     }
   };
 
+  // =====================================
+  // CLEAR USER CART ON LOGOUT
+  // =====================================
+  useEffect(() => {
+    // User was logged in and has now logged out
+    if (
+      previousAuthState.current === true &&
+      isAuthenticated === false
+    ) {
+      setCartItems([]);
+
+      localStorage.removeItem("cart");
+    }
+
+    previousAuthState.current =
+      isAuthenticated;
+  }, [isAuthenticated]);
 
   // =====================================
-// CLEAR USER CART ON LOGOUT
-// =====================================
-useEffect(() => {
-  // User was logged in and has now logged out
-  if (
-    previousAuthState.current === true &&
-    isAuthenticated === false
-  ) {
-    // Clear previous user's cart from state
-    setCartItems([]);
+  // CLEAR CART STATE WHEN ADMIN LOGS IN
+  // =====================================
+  useEffect(() => {
+    if (isAdmin) {
+      // Admin should never see a previous
+      // customer's cart in the admin session.
+      setCartItems([]);
 
-    // Remove previous user's cart from local storage
-    localStorage.removeItem("cart");
-  }
-
-  // Update previous authentication state
-  previousAuthState.current = isAuthenticated;
-}, [isAuthenticated]);
+      setCartLoading(false);
+    }
+  }, [isAdmin]);
 
   // =====================================
-  // MERGE GUEST CART AFTER LOGIN
+  // MERGE GUEST CART AFTER CUSTOMER LOGIN
   // =====================================
   const mergeGuestCart = async (
     guestItems
   ) => {
+    // Admin must never merge a guest cart
+    // into the backend customer cart.
     if (
+      !isAuthenticated ||
+      isAdmin ||
       !token ||
       !Array.isArray(guestItems) ||
       guestItems.length === 0
@@ -214,10 +244,24 @@ useEffect(() => {
   };
 
   // =====================================
-  // WHEN USER LOGS IN
+  // WHEN CUSTOMER LOGS IN
   // =====================================
   useEffect(() => {
     const syncCart = async () => {
+      // ---------------------------------
+      // ADMIN
+      // ---------------------------------
+      // Admin is authenticated but is not
+      // a customer cart user.
+      if (isAdmin) {
+        setCartItems([]);
+        setCartLoading(false);
+        return;
+      }
+
+      // ---------------------------------
+      // GUEST / NOT AUTHENTICATED
+      // ---------------------------------
       if (!isAuthenticated || !token) {
         return;
       }
@@ -247,7 +291,8 @@ useEffect(() => {
             formattedItems
           );
 
-          // Clear guest/local cart after successful merge
+          // Clear guest/local cart after
+          // successful merge
           localStorage.removeItem(
             "cart"
           );
@@ -262,13 +307,17 @@ useEffect(() => {
         );
 
         // If merge fails, still try fetching
-        await fetchCart();
+        // only for a normal customer.
+        if (!isAdmin) {
+          await fetchCart();
+        }
       }
     };
 
     syncCart();
   }, [
     isAuthenticated,
+    isAdmin,
     token,
   ]);
 
@@ -276,7 +325,9 @@ useEffect(() => {
   // SAVE GUEST CART ONLY
   // =====================================
   useEffect(() => {
-    if (!isAuthenticated) {
+    // Admin should never write anything into
+    // the customer guest cart.
+    if (!isAuthenticated && !isAdmin) {
       localStorage.setItem(
         "cart",
         JSON.stringify(cartItems)
@@ -285,6 +336,7 @@ useEffect(() => {
   }, [
     cartItems,
     isAuthenticated,
+    isAdmin,
   ]);
 
   // =====================================
@@ -295,9 +347,22 @@ useEffect(() => {
     variant,
     sizeItem
   ) => {
-    // -----------------------------
+    // ---------------------------------
+    // ADMIN
+    // ---------------------------------
+    // Admin can browse the store but should
+    // not use the customer cart API.
+    if (isAdmin) {
+      console.warn(
+        "Admin accounts cannot add products to cart."
+      );
+
+      return;
+    }
+
+    // ---------------------------------
     // GUEST CART
-    // -----------------------------
+    // ---------------------------------
     if (!isAuthenticated) {
       const existingItemIndex =
         cartItems.findIndex(
@@ -377,9 +442,9 @@ useEffect(() => {
       return;
     }
 
-    // -----------------------------
-    // LOGGED-IN USER
-    // -----------------------------
+    // ---------------------------------
+    // LOGGED-IN CUSTOMER
+    // ---------------------------------
     try {
       const response = await fetch(
         `${API_URL}/cart`,
@@ -436,9 +501,16 @@ useEffect(() => {
     size,
     cartItemId
   ) => {
-    // -----------------------------
+    // ---------------------------------
+    // ADMIN
+    // ---------------------------------
+    if (isAdmin) {
+      return;
+    }
+
+    // ---------------------------------
     // GUEST CART
-    // -----------------------------
+    // ---------------------------------
     if (!isAuthenticated) {
       setCartItems(
         (currentItems) =>
@@ -458,9 +530,9 @@ useEffect(() => {
       return;
     }
 
-    // -----------------------------
-    // LOGGED-IN USER
-    // -----------------------------
+    // ---------------------------------
+    // LOGGED-IN CUSTOMER
+    // ---------------------------------
     try {
       if (!cartItemId) {
         throw new Error(
@@ -515,9 +587,16 @@ useEffect(() => {
     quantity,
     cartItemId
   ) => {
-    // -----------------------------
+    // ---------------------------------
+    // ADMIN
+    // ---------------------------------
+    if (isAdmin) {
+      return;
+    }
+
+    // ---------------------------------
     // GUEST CART
-    // -----------------------------
+    // ---------------------------------
     if (!isAuthenticated) {
       setCartItems(
         (currentItems) =>
@@ -555,9 +634,9 @@ useEffect(() => {
       return;
     }
 
-    // -----------------------------
-    // LOGGED-IN USER
-    // -----------------------------
+    // ---------------------------------
+    // LOGGED-IN CUSTOMER
+    // ---------------------------------
     try {
       if (!cartItemId) {
         throw new Error(
@@ -614,6 +693,12 @@ useEffect(() => {
   // CLEAR CART
   // =====================================
   const clearCart = () => {
+    // Admin has no customer cart
+    if (isAdmin) {
+      setCartItems([]);
+      return;
+    }
+
     if (!isAuthenticated) {
       setCartItems([]);
 
@@ -625,7 +710,7 @@ useEffect(() => {
     }
 
     // For now clear frontend.
-    // We can add a backend clear-cart API later.
+    // Backend clear-cart API can be added later.
     setCartItems([]);
   };
 

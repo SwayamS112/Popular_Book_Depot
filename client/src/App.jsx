@@ -1,8 +1,15 @@
-import { Routes, Route } from "react-router-dom";
+import {
+  Routes,
+  Route,
+  useLocation,
+} from "react-router-dom";
 
 import Header from "./components/Header/Header.jsx";
+import AdminRoute from "./components/AdminRoute.jsx";
+
 import Hero from "./components/Hero/Hero.jsx";
 import PopularCollection from "./components/PopularCollection/PopularCollection.jsx";
+
 import CollectionPage from "./pages/CollectionPage.jsx";
 import ProductsPage from "./pages/ProductsPage";
 import ProductDetailsPage from "./pages/ProductDetailsPage";
@@ -13,11 +20,13 @@ import RegisterPage from "./pages/RegisterPage";
 import MyOrdersPage from "./pages/MyOrdersPage.jsx";
 import OrderDetailsPage from "./pages/OrderDetailsPage.jsx";
 import ProfilePage from "./pages/ProfilePage.jsx";
-import AdminLayout from "../src/pages/admin/AdminLayout.jsx"
-import AdminDashboard from "../src/pages/admin/AdminDashboard.jsx";
-import AdminProducts from "../src/pages/admin/AdminProducts.jsx";
-import AdminOrders from "../src/pages/admin/AdminOrders.jsx";
-import AdminUsers from "../src/pages/admin/AdminUsers.jsx";
+
+import AdminLayout from "./pages/admin/AdminLayout.jsx";
+import AdminDashboard from "./pages/admin/AdminDashboard.jsx";
+import AdminProducts from "./pages/admin/AdminProducts.jsx";
+import AdminOrders from "./pages/admin/AdminOrders.jsx";
+import AdminUsers from "./pages/admin/AdminUsers.jsx";
+import AdminHome from "./pages/admin/AdminHome.jsx";
 
 function HomePage() {
   return (
@@ -28,13 +37,24 @@ function HomePage() {
   );
 }
 
-function App() {
+function AppContent() {
+  const location = useLocation();
+
+  const isAdminRoute =
+    location.pathname.startsWith("/admin");
+
   return (
     <>
-      <Header />
+      {/* Customer Header is hidden inside Admin Panel */}
+      {!isAdminRoute && <Header />}
 
       <Routes>
-        <Route path="/" element={<HomePage />} />
+        {/* ================= CUSTOMER ================= */}
+
+        <Route
+          path="/"
+          element={<HomePage />}
+        />
 
         <Route
           path="/products/:section"
@@ -52,49 +72,80 @@ function App() {
         />
 
         <Route
-            path="/cart"
-            element={<CartPage />}
-          />
+          path="/cart"
+          element={<CartPage />}
+        />
 
         <Route
-            path="/checkout"
-            element={<CheckoutPage />}
-          />
+          path="/checkout"
+          element={<CheckoutPage />}
+        />
 
+        <Route
+          path="/login"
+          element={<LoginPage />}
+        />
+
+        <Route
+          path="/register"
+          element={<RegisterPage />}
+        />
+
+        <Route
+          path="/my-orders"
+          element={<MyOrdersPage />}
+        />
+
+        <Route
+          path="/my-orders/:id"
+          element={<OrderDetailsPage />}
+        />
+
+        <Route
+          path="/profile"
+          element={<ProfilePage />}
+        />
+
+        {/* ================= ADMIN ================= */}
+
+        <Route element={<AdminRoute />}>
           <Route
-            path="/login"
-            element={<LoginPage />}
-          />
+            path="/admin"
+            element={<AdminLayout />}
+          >
+            <Route
+              index
+              element={<AdminDashboard />}
+            />
 
-          <Route
-            path="/register"
-            element={<RegisterPage />}
-          />
+            <Route
+              path="products"
+              element={<AdminProducts />}
+            />
 
-          <Route
-            path="/my-orders"
-            element={<MyOrdersPage />}
-          />
+            <Route
+              path="orders"
+              element={<AdminOrders />}
+            />
 
-          <Route
-            path="/my-orders/:id"
-            element={<OrderDetailsPage />}
-          />
+            <Route
+              path="users"
+              element={<AdminUsers />}
+            />
 
-          <Route
-            path="/profile"
-            element={<ProfilePage />}
-          />
-
-          <Route path="/admin" element={<AdminLayout />}>
-          <Route index element={<AdminDashboard />} />
-          <Route path="products" element={<AdminProducts />} />
-          <Route path="orders" element={<AdminOrders />} />
-          <Route path="users" element={<AdminUsers />} />
+            <Route 
+            path="home" 
+            element={<AdminHome />} 
+            />
+          </Route>
         </Route>
       </Routes>
     </>
   );
+}
+
+function App() {
+  return <AppContent />;
 }
 
 export default App;
