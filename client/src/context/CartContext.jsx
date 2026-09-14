@@ -9,8 +9,9 @@ import {
 import { AuthContext } from "./AuthContext.jsx";
 
 export const CartContext = createContext();
+import API_BASE from "../config/api.js";
 
-const API_URL = "http://localhost:5001/api";
+const API_URL = `${API_BASE}/api`;
 
 export function CartProvider({ children }) {
   const {

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import API_BASE from "../../config/api.js";
 
 function PopularCollection() {
   const [collections, setCollections] = useState([]);
@@ -10,7 +11,7 @@ function PopularCollection() {
     const fetchHomeSections = async () => {
       try {
         const response = await fetch(
-          "http://localhost:5001/api/home-sections"
+          `${API_BASE}/api/home-sections`
         );
 
         const data = await response.json();

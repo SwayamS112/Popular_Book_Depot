@@ -8,6 +8,7 @@ import {
 
 import { AuthContext } from "../context/AuthContext.jsx";
 import { CartContext } from "../context/CartContext.jsx";
+import API_BASE from "../config/api.js";
 
 function LoginPage() {
   const navigate = useNavigate();
@@ -73,7 +74,7 @@ function LoginPage() {
 
     try {
       const response = await fetch(
-        "http://localhost:5001/api/auth/login",
+        `${API_BASE}/api/auth/login`,
         {
           method: "POST",
           headers: {

@@ -7,6 +7,7 @@ import {
 } from "react-router-dom";
 
 import { AuthContext } from "../context/AuthContext.jsx";
+import API_BASE from "../config/api.js";
 
 function OrderDetailsPage() {
   const { id } = useParams();
@@ -55,7 +56,7 @@ function OrderDetailsPage() {
         setError("");
 
         const response = await fetch(
-          `http://localhost:5001/api/orders/my-orders/${id}`,
+          `${API_BASE}/api/orders/my-orders/${id}`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -111,7 +112,7 @@ function OrderDetailsPage() {
       setSuccess("");
 
       const response = await fetch(
-        `http://localhost:5001/api/orders/my-orders/${id}/cancel`,
+        `${API_BASE}/api/orders/my-orders/${id}/cancel`,
         {
           method: "PUT",
           headers: {

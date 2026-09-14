@@ -12,6 +12,8 @@ import {
   AuthContext,
 } from "../context/AuthContext.jsx";
 
+import API_BASE from "../../src/config/api.js";
+
 function ProfilePage() {
   const navigate = useNavigate();
 
@@ -105,7 +107,7 @@ function ProfilePage() {
         setError("");
 
         const response = await fetch(
-          "http://localhost:5001/api/users/profile",
+          `${API_BASE}/api/users/profile`,
           {
             headers: {
               Authorization:
@@ -226,7 +228,7 @@ function ProfilePage() {
       setSuccess("");
 
       const response = await fetch(
-        "http://localhost:5001/api/users/profile",
+        `${API_BASE}/api/users/profile`,
         {
           method: "PUT",
 
@@ -304,7 +306,7 @@ function ProfilePage() {
       setSuccess("");
 
       const response = await fetch(
-        "http://localhost:5001/api/users/addresses",
+        `${API_BASE}/api/users/addresses`,
         {
           method: "POST",
 
@@ -430,7 +432,7 @@ function ProfilePage() {
       setSuccess("");
 
       const response = await fetch(
-        `http://localhost:5001/api/users/addresses/${editingAddressId}`,
+        `${API_BASE}/api/users/addresses/${editingAddressId}`,
         {
           method: "PUT",
 
@@ -510,7 +512,7 @@ function ProfilePage() {
 
         const response =
           await fetch(
-            `http://localhost:5001/api/users/addresses/${addressId}/default`,
+            `${API_BASE}/api/users/addresses/${addressId}/default`,
             {
               method: "PUT",
 
@@ -582,7 +584,7 @@ function ProfilePage() {
 
         const response =
           await fetch(
-            `http://localhost:5001/api/users/addresses/${addressId}`,
+            `${API_BASE}/api/users/addresses/${addressId}`,
             {
               method: "DELETE",
 

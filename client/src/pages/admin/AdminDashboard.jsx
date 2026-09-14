@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../../context/AuthContext.jsx";
+import API_BASE from "../../config/api.js";
 
 const initialStats = [
   {
@@ -45,7 +46,7 @@ function AdminDashboard() {
         setError("");
 
         const response = await fetch(
-          "http://localhost:5001/api/admin/dashboard",
+          `${API_BASE}/api/admin/dashboard`,
           {
             headers: {
               Authorization: `Bearer ${token}`,

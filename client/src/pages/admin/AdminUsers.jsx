@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
-
-const API_URL = "http://localhost:5001";
+import API_BASE from "../../config/api.js";
+const API_URL = `${API_BASE}/api`;
 
 function AdminUsers() {
   const [customers, setCustomers] = useState([]);
@@ -95,7 +95,7 @@ function AdminUsers() {
       setError("");
 
       const response = await fetch(
-        `${API_URL}/api/admin/customers/${customerId}`,
+        `${API_URL}/admin/customers/${customerId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -147,7 +147,7 @@ function AdminUsers() {
       setActionLoading(true);
 
       const response = await fetch(
-        `${API_URL}/api/admin/customers/${customer._id}/status`,
+        `${API_URL}/admin/customers/${customer._id}/status`,
         {
           method: "PUT",
 

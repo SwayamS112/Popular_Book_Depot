@@ -8,6 +8,8 @@ import {
 
 import { AuthContext } from "../context/AuthContext.jsx";
 import { CartContext } from "../context/CartContext.jsx";
+import API_BASE from "../config/api.js";
+
 
 function RegisterPage() {
   const navigate = useNavigate();
@@ -79,7 +81,7 @@ function RegisterPage() {
       setLoading(true);
 
       const response = await fetch(
-        "http://localhost:5001/api/auth/register",
+        `${API_BASE}/api/auth/register`,
         {
           method: "POST",
           headers: {

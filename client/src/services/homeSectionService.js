@@ -1,4 +1,6 @@
-const API_URL = "http://localhost:5001/api/home-sections";
+import API_BASE from "../config/api.js";
+
+const API_URL = `${API_BASE}/api/home-sections`;
 
 export const getHomeSections = async () => {
   const response = await fetch(API_URL);

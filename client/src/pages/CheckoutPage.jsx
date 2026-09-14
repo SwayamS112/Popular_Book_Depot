@@ -11,6 +11,7 @@ import {
 
 import { CartContext } from "../context/CartContext.jsx";
 import { AuthContext } from "../context/AuthContext.jsx";
+import API_BASE from "../config/api.js";
 
 function CheckoutPage() {
   const navigate = useNavigate();
@@ -85,7 +86,7 @@ function CheckoutPage() {
         setError("");
 
         const response = await fetch(
-          "http://localhost:5001/api/users/profile",
+          `${API_BASE}/api/users/profile`,
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -196,7 +197,7 @@ function CheckoutPage() {
 
     try {
       const response = await fetch(
-        "http://localhost:5001/api/users/addresses",
+        `${API_BASE}/api/users/addresses`,
         {
           method: "POST",
           headers: {
@@ -278,7 +279,7 @@ function CheckoutPage() {
 
     try {
       const response = await fetch(
-        "http://localhost:5001/api/orders",
+        `${API_BASE}/api/orders`,
         {
           method: "POST",
 

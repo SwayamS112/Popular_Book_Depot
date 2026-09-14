@@ -13,6 +13,8 @@ import {
   getParentCategoryByChildValue,
 } from "../data/collectionCategories";
 
+import API_BASE from "../config/api.js";
+
 function ProductsPage() {
   const { section } = useParams();
 
@@ -102,7 +104,7 @@ function ProductsPage() {
         setLoading(true);
 
         let url =
-          `http://localhost:5001/api/products?section=${section}&limit=50`;
+          `${API_BASE}/api/products?section=${section}&limit=50`;
 
         /*
           If a child category is selected,

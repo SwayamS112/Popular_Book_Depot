@@ -1,6 +1,7 @@
 import { useEffect, useState, useContext } from "react";
 import { useParams, Link } from "react-router-dom";
 import { CartContext } from "../context/CartContext.jsx";
+import API_BASE from "../config/api.js";
 
 function ProductDetailsPage() {
   const { id } = useParams();
@@ -24,7 +25,7 @@ function ProductDetailsPage() {
         setLoading(true);
 
         const response = await fetch(
-          `http://localhost:5001/api/products/${id}`
+          `${API_BASE}/api/products/${id}`
         );
 
         const data = await response.json();

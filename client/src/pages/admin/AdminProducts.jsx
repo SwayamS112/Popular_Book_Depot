@@ -1,7 +1,7 @@
 import { useContext, useEffect, useMemo, useState } from "react";
 import { AuthContext } from "../../context/AuthContext.jsx";
 
-const API_BASE = "http://localhost:5001";
+import API_BASE from "../../config/api.js";
 
 const CATEGORY_OPTIONS = {
   men: ["sports-shoes", "formal-shoes", "sneakers", "sandals", "home-slippers"],

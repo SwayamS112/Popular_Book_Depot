@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { collectionCategories } from "../utils/collectionCategories";
+import API_BASE from "../config/api.js";
 
 function CollectionPage() {
   const { collectionType } = useParams();
@@ -52,7 +53,7 @@ function CollectionPage() {
         setLoading(true);
 
         let url =
-          `http://localhost:5001/api/products?collection=${collectionType}&limit=50`;
+          `${API_BASE}/api/products?collection=${collectionType}&limit=50`;
 
         // Men / Women / Kids filter
         if (selectedSection !== "all") {

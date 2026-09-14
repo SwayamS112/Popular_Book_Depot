@@ -1,7 +1,7 @@
 import { useContext, useEffect, useMemo, useState } from "react";
 import { AuthContext } from "../../context/AuthContext.jsx";
 
-const API_URL = "http://localhost:5001/api";
+import API_BASE from "../../config/api.js";
 
 const STATUS_OPTIONS = ["pending", "confirmed", "packed", "shipped", "delivered", "cancelled"];
 const STATUS_LABELS = { pending:"Pending", confirmed:"Confirmed", packed:"Packed", shipped:"Shipped", delivered:"Delivered", cancelled:"Cancelled" };
@@ -36,7 +36,7 @@ function AdminOrders() {
     if (!token) return;
     try {
       setLoading(true); setError("");
-      const response = await fetch(`${API_URL}/orders/admin/all`, { headers:{ Authorization:`Bearer ${token}` } });
+      const response = await fetch(`${API_BASE}/api/orders/admin/all`, { headers:{ Authorization:`Bearer ${token}` } });
       const data = await response.json();
       if (!response.ok || !data.success) throw new Error(data.message || "Unable to load orders");
       setOrders(data.orders || []);
@@ -69,7 +69,7 @@ function AdminOrders() {
   const updateOrderStatus = async (orderId, orderStatus) => {
     try {
       setUpdatingOrderId(orderId); setError("");
-      const response = await fetch(`${API_URL}/orders/admin/${orderId}/status`, {
+      const response = await fetch(`${API_BASE}/api/orders/admin/${orderId}/status`, {
         method:"PUT",
         headers:{ "Content-Type":"application/json", Authorization:`Bearer ${token}` },
         body:JSON.stringify({ orderStatus }),

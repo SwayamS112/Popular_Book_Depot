@@ -10,6 +10,7 @@ import {
 } from "react-router-dom";
 
 import { AuthContext } from "../context/AuthContext.jsx";
+import API_BASE from "../config/api.js";
 
 function MyOrdersPage() {
   const navigate = useNavigate();
@@ -47,7 +48,7 @@ function MyOrdersPage() {
         setError("");
 
         const response = await fetch(
-          "http://localhost:5001/api/orders/my-orders",
+         `${API_BASE}/api/orders/my-orders`,
           {
             headers: {
               Authorization:
