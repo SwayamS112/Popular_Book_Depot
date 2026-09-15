@@ -41,7 +41,7 @@ function AdminUsers() {
       }
 
       const response = await fetch(
-        `${API_URL}/api/admin/customers?${params.toString()}`,
+        `${API_URL}/admin/customers?${params.toString()}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

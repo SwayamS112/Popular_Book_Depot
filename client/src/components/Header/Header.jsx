@@ -12,12 +12,8 @@ import { AuthContext } from "../../context/AuthContext.jsx";
 
 function Header() {
   const [activeMenu, setActiveMenu] = useState(null);
-  const [womenFancyOpen, setWomenFancyOpen] =
-    useState(false);
-
-  const [accountMenuOpen, setAccountMenuOpen] =
-    useState(false);
-
+  const [womenFancyOpen, setWomenFancyOpen] = useState(false);
+  const [accountMenuOpen, setAccountMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
   const { totalItems } = useContext(CartContext);
@@ -38,29 +34,30 @@ function Header() {
     setAccountMenuOpen(false);
   };
 
-  // Detect page scroll for premium sticky header effect
+  /* =========================================================
+     SCROLL EFFECT
+  ========================================================= */
+
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
     };
 
-    window.addEventListener(
-      "scroll",
-      handleScroll,
-      { passive: true }
-    );
+    window.addEventListener("scroll", handleScroll, {
+      passive: true,
+    });
 
     handleScroll();
 
     return () => {
-      window.removeEventListener(
-        "scroll",
-        handleScroll
-      );
+      window.removeEventListener("scroll", handleScroll);
     };
   }, []);
 
-  // Close menus when clicking outside
+  /* =========================================================
+     CLICK OUTSIDE
+  ========================================================= */
+
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (
@@ -84,11 +81,20 @@ function Header() {
     };
   }, []);
 
+  /* =========================================================
+     LOGOUT
+  ========================================================= */
+
   const handleLogout = () => {
     logout();
     closeAllMenus();
     navigate("/");
   };
+
+  /* =========================================================
+     EXISTING HOVER STYLES
+     Kept intentionally from your original header.
+  ========================================================= */
 
   const menuItemClass =
     "group flex items-center rounded-xl px-4 py-3 text-sm font-medium text-zinc-600 transition-all duration-200 hover:bg-zinc-100 hover:pl-5 hover:text-zinc-950";
@@ -103,7 +109,6 @@ function Header() {
   const simpleNavClass =
     "relative py-1 text-sm font-semibold text-zinc-600 transition-colors duration-200 hover:text-zinc-950 after:absolute after:-bottom-1 after:left-0 after:h-[2px] after:w-0 after:rounded-full after:bg-red-600 after:transition-all after:duration-300 hover:after:w-full";
 
-  // Premium Shop All button for Men and Women dropdowns
   const shopAllButtonClass =
     "group relative mb-2 flex w-full items-center justify-between overflow-hidden rounded-xl border border-red-200 bg-gradient-to-r from-red-50 via-white to-red-50 px-4 py-3.5 text-sm font-bold text-red-700 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-red-500 hover:from-red-600 hover:via-red-600 hover:to-red-500 hover:text-white hover:shadow-lg hover:shadow-red-600/20";
 
@@ -130,37 +135,49 @@ function Header() {
       ref={headerRef}
       className={`sticky top-0 z-50 w-full transition-all duration-300 ${
         scrolled
-          ? "border-b border-zinc-200/80 bg-white/90 shadow-[0_10px_35px_rgba(0,0,0,0.06)] backdrop-blur-xl"
-          : "border-b border-zinc-100 bg-white/95 backdrop-blur-md"
+          ? "border-b border-zinc-200/80 bg-white/95 shadow-[0_8px_30px_rgba(0,0,0,0.07)] backdrop-blur-xl"
+          : "border-b border-zinc-100 bg-white"
       }`}
     >
-      <div className="mx-auto flex h-[72px] max-w-[1440px] items-center justify-between px-5 sm:px-6 lg:px-10">
+      {/* =====================================================
+          MAIN HEADER
+      ===================================================== */}
 
-        {/* ================= LOGO ================= */}
+      <div className="mx-auto flex h-[64px] max-w-[1480px] items-center justify-between px-5 sm:px-6 lg:px-10">
+
+        {/* ===================================================
+            LOGO
+        =================================================== */}
+
         <Link
           to="/"
           onClick={closeAllMenus}
-          className="group relative flex items-center gap-2"
+          className="group flex shrink-0 items-center"
         >
-          <div className="relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl bg-zinc-950 text-sm font-black tracking-tight text-white shadow-sm transition-all duration-300 group-hover:-translate-y-0.5 group-hover:shadow-lg">
-            P
-
-            <span className="absolute bottom-0 left-0 h-1 w-full bg-red-600 transition-all duration-300 group-hover:h-1.5" />
-          </div>
-
-          <div className="hidden leading-none sm:block">
-            <p className="font-['Outfit'] text-lg font-extrabold tracking-[-0.04em] text-zinc-950">
+          <div className="leading-none">
+            <p className="font-['Outfit'] text-[21px] font-extrabold tracking-[-0.055em] text-zinc-950 transition-colors duration-200 group-hover:text-zinc-800">
               POPULAR
             </p>
 
-            <p className="mt-1 text-[9px] font-bold tracking-[0.24em] text-zinc-500">
-              FOOTWEAR
-            </p>
+            <div className="mt-[4px] flex items-center gap-1.5">
+              <span className="h-[3px] w-8 bg-red-600 transition-all duration-300 group-hover:w-10" />
+
+              <p className="text-[8px] font-bold tracking-[0.28em] text-zinc-500">
+                FOOTWEAR
+              </p>
+            </div>
           </div>
         </Link>
 
-        {/* ================= NAVIGATION ================= */}
-        <nav className="hidden h-full items-center gap-7 lg:flex">
+        {/* ===================================================
+            DESKTOP NAVIGATION
+
+            Search + Offers intentionally NOT included.
+        =================================================== */}
+
+        <nav className="hidden h-full items-center gap-6 lg:flex xl:gap-7">
+
+          {/* HOME */}
 
           <Link
             to="/"
@@ -170,7 +187,10 @@ function Header() {
             Home
           </Link>
 
-          {/* ================= MEN ================= */}
+          {/* =================================================
+              MEN
+          ================================================= */}
+
           <div
             className="relative flex h-full items-center"
             onMouseEnter={() => {
@@ -199,7 +219,6 @@ function Header() {
               <div className="absolute left-1/2 top-full z-50 w-[280px] -translate-x-1/2 pt-3">
                 <div className="overflow-hidden rounded-2xl border border-zinc-200/80 bg-white/95 p-2 shadow-[0_20px_60px_rgba(0,0,0,0.12)] backdrop-blur-xl animate-[fadeIn_0.18s_ease-out]">
 
-                  {/* UPDATED MEN SHOP ALL BUTTON */}
                   <Link
                     to="/products/men"
                     onClick={closeAllMenus}
@@ -267,13 +286,15 @@ function Header() {
                   >
                     Outside Slippers
                   </Link>
-
                 </div>
               </div>
             )}
           </div>
 
-          {/* ================= WOMEN ================= */}
+          {/* =================================================
+              WOMEN
+          ================================================= */}
+
           <div
             className="relative flex h-full items-center"
             onMouseEnter={() => {
@@ -301,7 +322,6 @@ function Header() {
               <div className="absolute left-1/2 top-full z-50 w-[285px] -translate-x-1/2 pt-3">
                 <div className="overflow-visible rounded-2xl border border-zinc-200/80 bg-white/95 p-2 shadow-[0_20px_60px_rgba(0,0,0,0.12)] backdrop-blur-xl animate-[fadeIn_0.18s_ease-out]">
 
-                  {/* UPDATED WOMEN SHOP ALL BUTTON */}
                   <Link
                     to="/products/women"
                     onClick={closeAllMenus}
@@ -361,6 +381,7 @@ function Header() {
                   </Link>
 
                   {/* FANCY SLIPPERS */}
+
                   <div
                     className="relative"
                     onMouseEnter={() =>
@@ -418,13 +439,15 @@ function Header() {
                   >
                     Outside Slippers
                   </Link>
-
                 </div>
               </div>
             )}
           </div>
 
-          {/* ================= KIDS ================= */}
+          {/* =================================================
+              KIDS
+          ================================================= */}
+
           <div
             className="relative flex h-full items-center"
             onMouseEnter={() => {
@@ -458,7 +481,9 @@ function Header() {
                     onClick={closeAllMenus}
                     className="group mb-2 flex items-center justify-between rounded-xl border border-red-200 bg-red-50 px-4 py-3.5 text-sm font-bold text-red-700 transition-all duration-300 hover:-translate-y-0.5 hover:border-red-600 hover:bg-red-600 hover:text-white hover:shadow-lg hover:shadow-red-600/20"
                   >
-                    <span>Shop All Kids' Footwear</span>
+                    <span>
+                      Shop All Kids' Footwear
+                    </span>
 
                     <span className="flex h-7 w-7 items-center justify-center rounded-full bg-red-600 text-base text-white transition-all duration-300 group-hover:translate-x-1 group-hover:bg-white group-hover:text-red-600">
                       →
@@ -502,7 +527,6 @@ function Header() {
                   </Link>
 
                   <div className="mt-1 border-t border-zinc-100 pt-1">
-
                     <Link
                       to="/kids-age-to-size"
                       onClick={closeAllMenus}
@@ -512,15 +536,16 @@ function Header() {
 
                       <span>→</span>
                     </Link>
-
                   </div>
-
                 </div>
               </div>
             )}
           </div>
 
-          {/* ================= ACCESSORIES ================= */}
+          {/* =================================================
+              ACCESSORIES
+          ================================================= */}
+
           <Link
             to="/products/accessories"
             onClick={closeAllMenus}
@@ -531,10 +556,16 @@ function Header() {
 
         </nav>
 
-        {/* ================= RIGHT SIDE ================= */}
+        {/* ===================================================
+            RIGHT SIDE
+        =================================================== */}
+
         <div className="flex items-center gap-3 sm:gap-4">
 
-          {/* ACCOUNT */}
+          {/* =================================================
+              ACCOUNT
+          ================================================= */}
+
           {isAuthenticated ? (
             <div className="relative">
 
@@ -549,7 +580,7 @@ function Header() {
                 }}
                 className="hidden items-center gap-2 rounded-full border border-transparent px-2 py-1.5 transition-all duration-200 hover:border-zinc-200 hover:bg-zinc-50 sm:flex"
               >
-                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-zinc-950 text-xs font-bold text-white shadow-sm">
+                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-zinc-950 text-xs font-bold text-white">
                   {user?.name
                     ?.charAt(0)
                     ?.toUpperCase() || "U"}
@@ -638,12 +669,15 @@ function Header() {
             </Link>
           )}
 
-          {/* ================= UPDATED CART ================= */}
+          {/* =================================================
+              CART
+          ================================================= */}
+
           <Link
             to="/cart"
             onClick={closeAllMenus}
             aria-label="Open shopping cart"
-            className="group relative flex h-11 w-11 items-center justify-center rounded-full border border-zinc-200 bg-white text-zinc-800 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-red-300 hover:bg-red-50 hover:text-red-600 hover:shadow-lg hover:shadow-red-600/10"
+            className="group relative flex h-10 w-10 items-center justify-center rounded-full border border-zinc-200 bg-white text-zinc-800 shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:border-red-300 hover:bg-red-50 hover:text-red-600 hover:shadow-lg hover:shadow-red-600/10 sm:h-11 sm:w-11"
           >
             <svg
               className="h-5 w-5 transition-transform duration-300 group-hover:scale-110"
@@ -669,7 +703,6 @@ function Header() {
           </Link>
 
         </div>
-
       </div>
     </header>
   );

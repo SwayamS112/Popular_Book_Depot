@@ -5,9 +5,11 @@ import {
 } from "react-router-dom";
 
 import Header from "./components/Header/Header.jsx";
+import Footer from "./components/Footer/Footer.jsx";
 import AdminRoute from "./components/AdminRoute.jsx";
 
 import Hero from "./components/Hero/Hero.jsx";
+import ShopByCategory from "./components/ShopByCategory/ShopByCategory.jsx";
 import PopularCollection from "./components/PopularCollection/PopularCollection.jsx";
 
 import CollectionPage from "./pages/CollectionPage.jsx";
@@ -20,6 +22,8 @@ import RegisterPage from "./pages/RegisterPage";
 import MyOrdersPage from "./pages/MyOrdersPage.jsx";
 import OrderDetailsPage from "./pages/OrderDetailsPage.jsx";
 import ProfilePage from "./pages/ProfilePage.jsx";
+import EveryMoment from "./components/EveryMoment/EveryMoment.jsx";
+import WhyChooseUs from "./components/WhyChooseUs/WhyChooseUs.jsx";
 
 import AdminLayout from "./pages/admin/AdminLayout.jsx";
 import AdminDashboard from "./pages/admin/AdminDashboard.jsx";
@@ -32,7 +36,10 @@ function HomePage() {
   return (
     <>
       <Hero />
+      <ShopByCategory />
       <PopularCollection />
+       <WhyChooseUs />
+      <EveryMoment />
     </>
   );
 }
@@ -133,13 +140,16 @@ function AppContent() {
               element={<AdminUsers />}
             />
 
-            <Route 
-            path="home" 
-            element={<AdminHome />} 
+            <Route
+              path="home"
+              element={<AdminHome />}
             />
           </Route>
         </Route>
       </Routes>
+      {/* CUSTOMER FOOTER */}
+
+      {!isAdminRoute && <Footer />}
     </>
   );
 }

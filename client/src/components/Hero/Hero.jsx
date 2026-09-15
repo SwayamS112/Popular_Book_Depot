@@ -4,31 +4,47 @@ import { Link } from "react-router-dom";
 import API_BASE from "../../config/api.js";
 
 const defaultHero = {
-  badge: "FOOTWEAR FOR EVERY STEP",
-  title: "STEP INTO",
-  highlight: "STYLE.",
+  badge: "STEP INTO A BETTER YOU",
+  title: "FOOTWEAR",
+  highlight: "FOR EVERY MOVE",
   description:
-    "From everyday comfort to statement-making style, discover footwear designed for every journey, every occasion and every step.",
+    "From everyday comfort to standout style — find your perfect pair at Popular Book Depot.",
+
   primaryButton: {
-    text: "SHOP MEN",
+    text: "SHOP NOW",
     link: "/products/men",
   },
+
   secondaryButton: {
-    text: "SHOP WOMEN",
-    link: "/products/women",
+    text: "",
+    link: "",
   },
+
   trustTitle: "50+ Years of Trust",
+
   trustDescription:
     "Serving generations with quality, comfort and customer belief.",
+
   stats: [
-    { value: "50+", label: "Years of Trust" },
-    { value: "10K+", label: "Happy Customers" },
-    { value: "Premium", label: "Quality Footwear" },
+    {
+      value: "50+",
+      label: "Years of Trust",
+    },
+    {
+      value: "10K+",
+      label: "Happy Customers",
+    },
+    {
+      value: "Premium",
+      label: "Quality Footwear",
+    },
   ],
+
   heroImage: {
     url: "",
     publicId: "",
   },
+
   isActive: true,
 };
 
@@ -36,28 +52,39 @@ function Hero() {
   const [hero, setHero] = useState(defaultHero);
   const [loading, setLoading] = useState(true);
 
+  /* =========================================================
+     FETCH HERO DATA
+  ========================================================= */
+
   useEffect(() => {
     const fetchHero = async () => {
       try {
-        const response = await fetch(`${API_BASE}/api/hero-section`);
+        const response = await fetch(
+          `${API_BASE}/api/hero-section`
+        );
+
         const data = await response.json();
 
         if (response.ok && data.success && data.hero) {
           setHero({
             ...defaultHero,
             ...data.hero,
+
             primaryButton: {
               ...defaultHero.primaryButton,
               ...(data.hero.primaryButton || {}),
             },
+
             secondaryButton: {
               ...defaultHero.secondaryButton,
               ...(data.hero.secondaryButton || {}),
             },
+
             heroImage: {
               ...defaultHero.heroImage,
               ...(data.hero.heroImage || {}),
             },
+
             stats:
               data.hero.stats?.length > 0
                 ? data.hero.stats
@@ -65,7 +92,10 @@ function Hero() {
           });
         }
       } catch (error) {
-        console.error("Error loading Hero section:", error);
+        console.error(
+          "Error loading Hero section:",
+          error
+        );
       } finally {
         setLoading(false);
       }
@@ -74,216 +104,346 @@ function Hero() {
     fetchHero();
   }, []);
 
+  /* =========================================================
+     LOADING
+  ========================================================= */
+
   if (loading) {
     return (
-      <section className="relative isolate overflow-hidden bg-[#f5f3ee]">
-        <div className="flex min-h-[calc(100vh-72px)] items-center justify-center">
-          <div className="h-10 w-10 animate-spin rounded-full border-2 border-zinc-200 border-t-red-600" />
+      <section className="relative h-[430px] overflow-hidden bg-zinc-950">
+        <div className="flex h-full items-center justify-center">
+          <div className="h-9 w-9 animate-spin rounded-full border-2 border-white/20 border-t-red-500" />
         </div>
       </section>
     );
   }
+
+  /* =========================================================
+     HERO DISABLED FROM ADMIN
+  ========================================================= */
 
   if (!hero.isActive) {
     return null;
   }
 
   return (
-    <section className="relative isolate overflow-hidden bg-[#f5f3ee]">
-      {/* ================= BACKGROUND ================= */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="hero-orb hero-orb-one" />
-        <div className="hero-orb hero-orb-two" />
+    <section className="relative isolate overflow-hidden bg-zinc-950">
 
-        <div className="absolute -left-20 top-16 h-64 w-64 rounded-full border border-black/[0.04]" />
+      {/* =====================================================
+          HERO BACKGROUND IMAGE
+      ===================================================== */}
 
-        <div className="absolute -right-24 bottom-[-70px] h-80 w-80 rounded-full border border-black/[0.04]" />
+      <div className="absolute inset-0">
 
-        <div className="absolute left-1/2 top-0 hidden h-full w-px -translate-x-1/2 bg-black/[0.035] lg:block" />
+        {hero.heroImage?.url ? (
+          <img
+            src={hero.heroImage.url}
+            alt="Popular Footwear"
+            className="h-full w-full object-cover object-center"
+          />
+        ) : (
+          <div className="h-full w-full bg-gradient-to-br from-zinc-950 via-zinc-800 to-zinc-950" />
+        )}
+
+        {/* Overall image darkening */}
+
+        <div className="absolute inset-0 bg-black/25" />
+
+        {/* Left text readability */}
+
+        <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/65 via-45% to-black/10" />
+
+        {/* Bottom fade */}
+
+        <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-black/45 to-transparent" />
+
       </div>
 
-      {/* ================= MAIN HERO ================= */}
-      <div className="relative mx-auto grid min-h-[calc(100vh-72px)] max-w-[1586px] items-center gap-2 px-6 py-5 sm:px-8 lg:grid-cols-[0.9fr_1.1fr] lg:px-12 lg:py-6 xl:px-16">
-        {/* ================= LEFT CONTENT ================= */}
-        <div className="relative z-20 max-w-[620px]">
-          {/* Badge */}
+      {/* =====================================================
+          MAIN HERO CONTAINER
+      ===================================================== */}
+
+      <div className="relative mx-auto flex min-h-[430px] max-w-[1480px] items-center px-6 py-12 sm:px-8 lg:min-h-[470px] lg:px-10 xl:px-14">
+
+        {/* ===================================================
+            LEFT CONTENT
+        =================================================== */}
+
+        <div className="relative z-20 max-w-[650px]">
+
+          {/* EYEBROW */}
+
           <div className="hero-reveal">
-            <p className="mb-5 flex items-center gap-3 text-xs font-bold tracking-[0.25em] text-zinc-500">
-              <span className="h-px w-10 bg-red-600" />
+
+            <p className="flex items-center gap-3 text-[9px] font-bold uppercase tracking-[0.27em] text-red-400 sm:text-[10px]">
+
+              <span className="h-[1px] w-8 bg-red-500 sm:w-10" />
+
               {hero.badge}
+
             </p>
+
           </div>
 
-          {/* Heading */}
-          <div className="hero-reveal hero-reveal-delay-1">
-            <h1 className="font-['Outfit'] text-[clamp(3.5rem,6.7vw,7rem)] font-extrabold leading-[0.88] tracking-[-0.06em] text-zinc-950">
+          {/* =================================================
+              TITLE
+          ================================================= */}
+
+          <div className="hero-reveal hero-reveal-delay-1 mt-4 sm:mt-5">
+
+            <h1 className="font-['Outfit'] text-[clamp(3.2rem,6.4vw,6.3rem)] font-extrabold uppercase leading-[0.86] tracking-[-0.065em] text-white">
+
               {hero.title}
-              <span className="block text-red-600">{hero.highlight}</span>
+
+              {hero.highlight && (
+                <span className="block text-white">
+                  {hero.highlight}
+                </span>
+              )}
+
             </h1>
+
           </div>
 
-          {/* Description */}
-          <div className="hero-reveal hero-reveal-delay-2">
-            <p className="mt-7 max-w-[560px] text-base leading-8 text-zinc-600 sm:text-lg">
-              {hero.description}
-            </p>
-          </div>
+          {/* =================================================
+              DESCRIPTION
+          ================================================= */}
 
-          {/* CTA */}
-          <div className="hero-reveal hero-reveal-delay-3 mt-8 flex flex-wrap items-center gap-4">
+          {hero.description && (
+            <div className="hero-reveal hero-reveal-delay-2">
+
+              <p className="mt-5 max-w-[500px] text-[13px] leading-[1.65] text-white/80 sm:mt-6 sm:text-sm sm:leading-6">
+
+                {hero.description}
+
+              </p>
+
+            </div>
+          )}
+
+          {/* =================================================
+              BUTTONS
+          ================================================= */}
+
+          <div className="hero-reveal hero-reveal-delay-3 mt-6 flex flex-wrap items-center gap-3">
+
+            {/* PRIMARY */}
+
             {hero.primaryButton?.text && (
               <Link
-                to={hero.primaryButton.link || "/products/men"}
-                className="group inline-flex items-center gap-4 rounded-full bg-red-600 px-7 py-4 text-sm font-bold text-white shadow-lg shadow-red-600/20 transition duration-300 hover:-translate-y-1 hover:bg-red-700 hover:shadow-xl hover:shadow-red-600/30"
+                to={
+                  hero.primaryButton.link ||
+                  "/products/men"
+                }
+                className="group inline-flex min-h-[45px] items-center gap-3 rounded-full bg-white px-4 pl-5 text-[11px] font-bold text-zinc-950 shadow-xl transition-all duration-300 hover:-translate-y-1 hover:bg-red-600 hover:text-white hover:shadow-2xl sm:min-h-[48px] sm:gap-4 sm:pl-6 sm:text-xs"
               >
-                {hero.primaryButton.text}
 
-                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-white text-sm text-zinc-950 transition duration-300 group-hover:translate-x-1">
+                <span>
+                  {hero.primaryButton.text}
+                </span>
+
+                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-zinc-950 text-sm text-white transition-all duration-300 group-hover:translate-x-1 group-hover:bg-white group-hover:text-zinc-950">
                   →
                 </span>
+
               </Link>
             )}
+
+            {/* SECONDARY */}
 
             {hero.secondaryButton?.text && (
               <Link
-                to={hero.secondaryButton.link || "/products/women"}
-                className="group inline-flex items-center gap-3 rounded-full border border-zinc-300 bg-white px-6 py-4 text-sm font-bold text-zinc-900 shadow-sm transition duration-300 hover:-translate-y-1 hover:border-red-200 hover:text-red-600 hover:shadow-md"
+                to={
+                  hero.secondaryButton.link ||
+                  "/products/women"
+                }
+                className="group inline-flex min-h-[45px] items-center gap-2 rounded-full border border-white/40 bg-white/10 px-5 text-[11px] font-bold text-white backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-white hover:bg-white hover:text-zinc-950 sm:min-h-[48px] sm:px-6 sm:text-xs"
               >
+
                 {hero.secondaryButton.text}
 
-                <span className="transition duration-300 group-hover:translate-x-1">
+                <span className="transition-transform duration-300 group-hover:translate-x-1">
                   →
                 </span>
+
               </Link>
             )}
+
           </div>
 
-          {/* Trust */}
-          <div className="hero-reveal hero-reveal-delay-4 mt-9 flex flex-wrap items-center gap-5">
-            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-red-600 text-xl text-white shadow-lg shadow-red-600/20">
-              ★
+        </div>
+
+        {/* ===================================================
+            RIGHT SIDE — GOOD SHOES / BRIGHTER DAYS
+        =================================================== */}
+
+        <div className="pointer-events-none absolute right-5 top-1/2 z-20 hidden -translate-y-1/2 lg:right-8 lg:block xl:right-12">
+
+          <div className="flex flex-col items-end">
+
+            <p className="font-['Outfit'] text-[23px] font-medium italic leading-[1.05] text-white/85 xl:text-[27px]">
+
+              Good
+              <br />
+
+              Shoes
+              <br />
+
+              Brighter
+              <br />
+
+              Days
+
+            </p>
+
+            {/* Handwritten-style underline */}
+
+            <div className="relative mt-4 h-4 w-16">
+
+              <span className="absolute right-0 top-1 h-px w-14 rotate-[-7deg] bg-white/70" />
+
+              <span className="absolute right-3 top-3 h-px w-9 rotate-[5deg] bg-white/50" />
+
+            </div>
+
+          </div>
+
+        </div>
+
+        {/* ===================================================
+            SMALL TRUST LABEL
+        =================================================== */}
+
+        <div className="hero-floating-card absolute bottom-16 right-7 z-20 hidden lg:block xl:right-12">
+
+          <div className="rounded-xl border border-white/20 bg-black/35 px-4 py-3 backdrop-blur-md">
+
+            <p className="text-[7px] font-bold uppercase tracking-[0.2em] text-white/55">
+              Trusted Since
+            </p>
+
+            <p className="mt-1 font-['Outfit'] text-xl font-extrabold leading-none text-white">
+              {hero.stats?.[0]?.value || "50+"}
+            </p>
+
+            <p className="mt-1 text-[8px] text-white/60">
+              Years of Trust
+            </p>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      {/* =====================================================
+          BOTTOM TRUST / FEATURE STRIP
+      ===================================================== */}
+
+      <div className="relative border-t border-white/10 bg-[#f8f6f2]">
+
+        <div className="mx-auto grid max-w-[1480px] grid-cols-2 lg:grid-cols-4">
+
+          {/* =================================================
+              FREE SHIPPING
+          ================================================= */}
+
+          <div className="flex min-h-[70px] items-center gap-3 border-zinc-200 px-5 py-3 lg:border-r lg:px-7">
+
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center text-[22px] text-zinc-950">
+              🚚
             </div>
 
             <div>
-              <p className="font-['Outfit'] text-lg font-bold text-zinc-950">
-                {hero.trustTitle}
+
+              <p className="text-[11px] font-bold text-zinc-950 sm:text-xs">
+                Free Shipping
               </p>
 
-              <p className="mt-1 text-sm text-zinc-500">
-                {hero.trustDescription}
+              <p className="mt-0.5 text-[9px] leading-4 text-zinc-500 sm:text-[10px]">
+                On orders above ₹999
               </p>
+
             </div>
+
           </div>
 
-          {/* Stats */}
-          {hero.stats?.length > 0 && (
-            <div className="hero-reveal hero-reveal-delay-4 mt-7 flex flex-wrap gap-x-9 gap-y-5 border-t border-black/10 pt-6">
-              {hero.stats.map((stat, index) => (
-                <div key={index}>
-                  <p className="font-['Outfit'] text-2xl font-bold text-zinc-950">
-                    {stat.value}
-                  </p>
+          {/* =================================================
+              EASY RETURNS
+          ================================================= */}
 
-                  <p className="mt-1 text-xs font-medium uppercase tracking-[0.15em] text-zinc-500">
-                    {stat.label}
-                  </p>
-                </div>
-              ))}
+          <div className="flex min-h-[70px] items-center gap-3 border-zinc-200 px-5 py-3 lg:border-r lg:px-7">
+
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center text-[22px] text-zinc-950">
+              ↻
             </div>
-          )}
+
+            <div>
+
+              <p className="text-[11px] font-bold text-zinc-950 sm:text-xs">
+                Easy Returns
+              </p>
+
+              <p className="mt-0.5 text-[9px] leading-4 text-zinc-500 sm:text-[10px]">
+                Hassle-free within 7 days
+              </p>
+
+            </div>
+
+          </div>
+
+          {/* =================================================
+              SECURE PAYMENTS
+          ================================================= */}
+
+          <div className="flex min-h-[70px] items-center gap-3 border-zinc-200 px-5 py-3 lg:border-r lg:px-7">
+
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center text-[22px] text-zinc-950">
+              ◈
+            </div>
+
+            <div>
+
+              <p className="text-[11px] font-bold text-zinc-950 sm:text-xs">
+                Secure Payments
+              </p>
+
+              <p className="mt-0.5 text-[9px] leading-4 text-zinc-500 sm:text-[10px]">
+                100% secure & trusted
+              </p>
+
+            </div>
+
+          </div>
+
+          {/* =================================================
+              CUSTOMER SUPPORT
+          ================================================= */}
+
+          <div className="flex min-h-[70px] items-center gap-3 px-5 py-3 lg:px-7">
+
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center text-[22px] text-zinc-950">
+              ☎
+            </div>
+
+            <div>
+
+              <p className="text-[11px] font-bold text-zinc-950 sm:text-xs">
+                Customer Support
+              </p>
+
+              <p className="mt-0.5 text-[9px] leading-4 text-zinc-500 sm:text-[10px]">
+                We're here to help
+              </p>
+
+            </div>
+
+          </div>
+
         </div>
 
-        {/* ================= RIGHT PRODUCT SHOWCASE ================= */}
-        <div className="relative flex min-h-[470px] items-center justify-center lg:min-h-[650px]">
-          {/* Ambient glow */}
-          <div className="pointer-events-none absolute right-[5%] top-1/2 h-[min(40rem,70vw)] w-[min(40rem,70vw)] -translate-y-1/2 rounded-full bg-red-500/10 blur-3xl" />
-
-          {/* Decorative circles behind image */}
-          <div className="pointer-events-none absolute right-[5%] top-1/2 h-[min(38rem,68vw)] w-[min(38rem,68vw)] -translate-y-1/2 rounded-full border border-red-600/[0.08]" />
-
-          <div className="pointer-events-none absolute right-[8%] top-1/2 h-[min(32rem,58vw)] w-[min(32rem,58vw)] -translate-y-1/2 rounded-full border border-red-600/[0.06]" />
-
-          {/* Product image */}
-          <div className="hero-reveal hero-reveal-delay-2 group relative z-10 w-full max-w-[820px]">
-            {hero.heroImage?.url ? (
-              <div className="relative overflow-visible">
-                <img
-                  src={hero.heroImage.url}
-                  alt="Popular Footwear"
-                  className="mx-auto block h-auto w-full max-h-[650px] object-contain drop-shadow-[0_30px_45px_rgba(0,0,0,0.12)] transition duration-700 ease-out group-hover:-translate-y-2 group-hover:scale-[1.018] group-hover:drop-shadow-[0_42px_60px_rgba(0,0,0,0.18)]"
-                />
-
-                {/* Premium hover pill */}
-                <div className="pointer-events-none absolute bottom-[7%] left-1/2 -translate-x-1/2 translate-y-3 rounded-full border border-white/70 bg-white/90 px-5 py-2.5 text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-700 opacity-0 shadow-xl backdrop-blur-xl transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100">
-                  Premium Footwear
-                </div>
-              </div>
-            ) : (
-              <div className="mx-auto flex aspect-[16/10] w-full max-w-[820px] items-center justify-center rounded-[3rem] bg-gradient-to-br from-red-600 via-red-500 to-orange-400 p-8 shadow-[0_35px_90px_rgba(220,38,38,0.22)]">
-                <div className="flex h-full w-full items-center justify-center rounded-[2.5rem] border border-white/20 bg-white/10 text-center backdrop-blur">
-                  <div>
-                    <div className="rounded-full border border-white/40 bg-white/20 px-4 py-2 text-[10px] font-bold tracking-[0.25em] text-white">
-                      POPULAR FOOTWEAR
-                    </div>
-
-                    <p className="mt-6 font-['Outfit'] text-5xl font-extrabold tracking-[-0.06em] text-white sm:text-7xl">
-                      WALK
-                    </p>
-
-                    <p className="font-['Outfit'] text-5xl font-extrabold tracking-[-0.06em] text-zinc-950 sm:text-7xl">
-                      BOLD.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-
-          {/* Floating trust card — outside the uploaded image */}
-          <div className="hero-floating-card absolute right-[1%] top-[8%] z-30 rounded-2xl border border-white/80 bg-white/90 px-5 py-4 shadow-xl backdrop-blur-xl">
-            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-zinc-400">
-              Since Day One
-            </p>
-
-            <p className="mt-1 font-['Outfit'] text-lg font-bold text-zinc-950">
-              {hero.trustTitle}
-            </p>
-
-            <p className="mt-1 text-xs text-zinc-500">
-              Trusted by generations
-            </p>
-          </div>
-
-          {/* Small floating 50+ badge */}
-          <div className="hero-floating-card absolute bottom-[10%] left-[3%] z-30 flex h-24 w-24 flex-col items-center justify-center rounded-full border border-red-100 bg-white/95 text-center shadow-xl backdrop-blur-xl">
-            <span className="font-['Outfit'] text-xl font-extrabold text-red-600">
-              {hero.stats?.[0]?.value || "50+"}
-            </span>
-
-            <span className="mt-1 text-[8px] font-bold uppercase tracking-[0.12em] text-zinc-500">
-              Years of
-              <br />
-              Trust
-            </span>
-          </div>
-
-          {/* Vertical quality text */}
-          <p className="absolute -right-1 bottom-20 hidden origin-center rotate-90 text-[10px] font-bold tracking-[0.3em] text-zinc-400 xl:block">
-            QUALITY • COMFORT • TRUST
-          </p>
-        </div>
       </div>
 
-      {/* ================= BOTTOM MARQUEE ================= */}
-      <div className="relative border-y border-black/10 bg-white/70 py-3 backdrop-blur">
-        <div className="hero-marquee whitespace-nowrap text-xs font-bold tracking-[0.18em] text-zinc-600">
-          <span>
-            50+ YEARS OF TRUST • PREMIUM FOOTWEAR • WALK WITH CONFIDENCE •
-            EVERYDAY COMFORT • STYLE FOR EVERY GENERATION • 50+ YEARS OF TRUST •
-            PREMIUM FOOTWEAR • WALK WITH CONFIDENCE • EVERYDAY COMFORT •
-          </span>
-        </div>
-      </div>
     </section>
   );
 }

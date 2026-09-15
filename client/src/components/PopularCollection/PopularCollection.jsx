@@ -1,243 +1,281 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+
 import API_BASE from "../../config/api.js";
+
+const fallbackCollections = [
+  {
+    sectionKey: "most-popular",
+    title: "Most Popular Right Now",
+    subtitle: "Our customers' favourite styles",
+    buttonText: "Shop Popular",
+    buttonLink: "/collection/most-popular",
+    image: {
+      url: "",
+    },
+  },
+  {
+    sectionKey: "best-sellers",
+    title: "Best Sellers",
+    subtitle: "Our most purchased footwear",
+    buttonText: "Explore",
+    buttonLink: "/collection/best-sellers",
+    image: {
+      url: "",
+    },
+  },
+  {
+    sectionKey: "new-arrivals",
+    title: "New Arrivals",
+    subtitle: "Fresh styles just added",
+    buttonText: "Explore",
+    buttonLink: "/collection/new-arrivals",
+    image: {
+      url: "",
+    },
+  },
+];
 
 function PopularCollection() {
   const [collections, setCollections] = useState([]);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
+
+  /* =========================================================
+     FETCH COLLECTIONS
+  ========================================================= */
 
   useEffect(() => {
-    const fetchHomeSections = async () => {
+    const fetchCollections = async () => {
       try {
         const response = await fetch(
           `${API_BASE}/api/home-sections`
         );
 
+        if (!response.ok) {
+          throw new Error(
+            "Failed to fetch home collections"
+          );
+        }
+
         const data = await response.json();
 
-        if (data.success) {
-          setCollections(data.sections || []);
+        if (data.success && Array.isArray(data.sections)) {
+          const activeSections = data.sections
+            .filter((section) => section.isActive)
+            .sort((a, b) => {
+              const orderA = Number(a.order || 0);
+              const orderB = Number(b.order || 0);
+
+              return orderA - orderB;
+            });
+
+          setCollections(activeSections);
+        } else {
+          setCollections([]);
         }
       } catch (error) {
-        console.error("Error fetching home sections:", error);
+        console.error(
+          "Error loading collections:",
+          error
+        );
+
+        setCollections([]);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchHomeSections();
+    fetchCollections();
   }, []);
+
+  /* =========================================================
+     LOADING
+  ========================================================= */
 
   if (loading) {
     return (
-      <section className="bg-[#f7f6f2] px-6 py-20 lg:px-8 lg:py-28">
-        <div className="mx-auto max-w-7xl">
-          <div className="flex flex-col items-center justify-center py-20">
-            <div className="h-11 w-11 animate-spin rounded-full border-2 border-zinc-200 border-t-red-600" />
-
-            <p className="mt-5 text-xs font-bold tracking-[0.2em] text-zinc-500">
-              LOADING COLLECTIONS
-            </p>
-          </div>
+      <section className="bg-[#f8f7f4] px-4 py-8 sm:px-6 lg:px-8">
+        <div className="mx-auto grid max-w-[1480px] grid-cols-1 gap-4 md:grid-cols-3">
+          {[1, 2, 3].map((item) => (
+            <div
+              key={item}
+              className="h-[300px] animate-pulse rounded-[18px] bg-zinc-200"
+            />
+          ))}
         </div>
       </section>
     );
   }
 
+  /* =========================================================
+     USE FALLBACK ONLY IF API HAS NO SECTIONS
+  ========================================================= */
+
+  const displayCollections =
+    collections.length > 0
+      ? collections.slice(0, 3)
+      : fallbackCollections;
+
   return (
-    <section className="relative overflow-hidden bg-[#f7f6f2] px-6 py-20 lg:px-8 lg:py-28">
-      {/* Background decorations */}
-      <div className="pointer-events-none absolute left-[-140px] top-[15%] h-[420px] w-[420px] rounded-full border border-red-600/[0.08]" />
+    <section className="bg-[#f8f7f4] px-4 pb-14 pt-2 sm:px-6 sm:pb-16 lg:px-8">
 
-      <div className="pointer-events-none absolute right-[-180px] top-20 h-[500px] w-[500px] rounded-full bg-red-600/[0.025] blur-3xl" />
+      <div className="mx-auto max-w-[1480px]">
 
-      <div className="relative mx-auto max-w-7xl">
-        {/* Header */}
-        <div className="grid gap-8 border-b border-zinc-200 pb-10 lg:grid-cols-[1.2fr_0.8fr] lg:items-end">
-          <div>
-            <div className="flex items-center gap-3">
-              <span className="h-px w-12 bg-red-600" />
+        {/* =====================================================
+            COLLECTION GRID
+        ===================================================== */}
 
-              <p className="text-xs font-bold tracking-[0.25em] text-red-600">
-                OUR TOP COLLECTIONS
-              </p>
-            </div>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
 
-            <h2 className="mt-5 font-['Outfit'] text-4xl font-extrabold leading-[0.95] tracking-[-0.05em] text-zinc-950 sm:text-5xl lg:text-6xl">
-              Made for Every
-              <span className="block text-red-600">Step You Take.</span>
-            </h2>
-          </div>
+          {displayCollections.map(
+            (collection, index) => {
+              const imageUrl =
+                collection.image?.url || "";
 
-          <div className="lg:pb-1">
-            <p className="max-w-md text-sm leading-7 text-zinc-500 sm:text-base">
-              Explore footwear chosen for comfort, everyday movement and
-              standout style. Find the pair that fits your journey.
-            </p>
-          </div>
+              const collectionNumber =
+                String(index + 1).padStart(2, "0");
+
+              const buttonLink =
+                collection.buttonLink ||
+                "/collection/most-popular";
+
+              return (
+                <article
+                  key={
+                    collection._id ||
+                    collection.sectionKey ||
+                    index
+                  }
+                  className="group relative min-h-[330px] overflow-hidden rounded-[18px] bg-zinc-900 shadow-[0_12px_35px_rgba(0,0,0,0.10)] transition-all duration-500 hover:-translate-y-1 hover:shadow-[0_20px_45px_rgba(0,0,0,0.16)] sm:min-h-[350px]"
+                >
+
+                  {/* =================================================
+                      BACKGROUND IMAGE
+                  ================================================= */}
+
+                  {imageUrl ? (
+                    <img
+                      src={imageUrl}
+                      alt={collection.title || "Collection"}
+                      className="absolute inset-0 h-full w-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+                    />
+                  ) : (
+                    <div
+                      className={`absolute inset-0 ${
+                        index === 0
+                          ? "bg-gradient-to-br from-zinc-950 via-zinc-800 to-zinc-950"
+                          : index === 1
+                          ? "bg-gradient-to-br from-[#351416] via-[#641d21] to-zinc-950"
+                          : "bg-gradient-to-br from-[#39352f] via-[#696052] to-zinc-950"
+                      }`}
+                    />
+                  )}
+
+                  {/* =================================================
+                      IMAGE OVERLAY
+                  ================================================= */}
+
+                  <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-black/10" />
+
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-transparent to-black/10" />
+
+                  {/* =================================================
+                      SUBTLE HOVER GLOW
+                  ================================================= */}
+
+                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/[0.06] via-transparent to-red-500/[0.08] opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+
+                  {/* =================================================
+                      CARD CONTENT
+                  ================================================= */}
+
+                  <div className="relative z-10 flex min-h-[330px] flex-col p-5 sm:min-h-[350px] sm:p-6">
+
+                    {/* =================================================
+                        COLLECTION NUMBER
+                    ================================================= */}
+
+                    <div className="flex items-center gap-3">
+
+                      <span className="text-[9px] font-bold tracking-[0.18em] text-white">
+                        {collectionNumber}
+                      </span>
+
+                      <span className="h-[1px] w-8 bg-red-500" />
+
+                      <span className="text-[8px] font-bold tracking-[0.24em] text-white/75">
+                        COLLECTION
+                      </span>
+
+                    </div>
+
+                    {/* =================================================
+                        BOTTOM CONTENT
+                    ================================================= */}
+
+                    <div className="mt-auto max-w-[310px]">
+
+                      {/* LABEL */}
+
+                      <p className="mb-2 text-[8px] font-bold uppercase tracking-[0.22em] text-red-400">
+                        Discover the Collection
+                      </p>
+
+                      {/* TITLE */}
+
+                      <h2 className="font-['Outfit'] text-[25px] font-extrabold leading-[0.98] tracking-[-0.045em] text-white sm:text-[28px] lg:text-[30px]">
+                        {collection.title}
+                      </h2>
+
+                      {/* SUBTITLE */}
+
+                      {collection.subtitle && (
+                        <p className="mt-3 text-[11px] leading-5 text-white/75 sm:text-xs">
+                          {collection.subtitle}
+                        </p>
+                      )}
+
+                      {/* =================================================
+                          BUTTON
+                      ================================================= */}
+
+                      {collection.buttonText && (
+                        <Link
+                          to={buttonLink}
+                          className="group/button mt-5 inline-flex min-h-[39px] items-center gap-3 rounded-full bg-white px-4 pl-4 text-[10px] font-bold text-zinc-950 shadow-lg transition-all duration-300 hover:-translate-y-0.5 hover:bg-red-600 hover:text-white sm:min-h-[42px] sm:pl-5 sm:text-[11px]"
+                        >
+
+                          <span>
+                            {collection.buttonText}
+                          </span>
+
+                          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-zinc-950 text-[11px] text-white transition-all duration-300 group-hover/button:translate-x-1 group-hover/button:bg-white group-hover/button:text-zinc-950">
+                            →
+                          </span>
+
+                        </Link>
+                      )}
+
+                    </div>
+
+                  </div>
+
+                  {/* =================================================
+                      BOTTOM RED ACCENT
+                  ================================================= */}
+
+                  <div className="absolute bottom-0 left-0 h-[3px] w-full bg-red-600 opacity-80 transition-all duration-500 group-hover:h-[5px]" />
+
+                </article>
+              );
+            }
+          )}
+
         </div>
 
-        {/* Collections */}
-        {collections.length > 0 ? (
-          <div className="mt-10 grid gap-5 lg:grid-cols-[1.15fr_0.85fr]">
-            {/* FEATURED LARGE CARD */}
-            {collections[0] && (
-              <CollectionCard
-                collection={collections[0]}
-                index={0}
-                navigate={navigate}
-                featured
-              />
-            )}
-
-            {/* RIGHT CARDS */}
-            <div className="grid gap-5">
-              {collections.slice(1, 3).map((collection, index) => (
-                <CollectionCard
-                  key={collection._id}
-                  collection={collection}
-                  index={index + 1}
-                  navigate={navigate}
-                />
-              ))}
-            </div>
-          </div>
-        ) : (
-          <div className="mt-10 rounded-[2rem] border border-dashed border-zinc-300 bg-white px-6 py-20 text-center">
-            <p className="font-['Outfit'] text-2xl font-bold text-zinc-900">
-              New collections are coming soon.
-            </p>
-
-            <p className="mt-3 text-sm text-zinc-500">
-              Check back soon to explore our latest footwear styles.
-            </p>
-          </div>
-        )}
-
-        {/* Bottom trust line */}
-        <div className="mt-12 flex flex-col gap-5 border-t border-zinc-200 pt-7 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-4">
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-red-600 text-sm font-bold text-white shadow-lg shadow-red-600/20">
-              50+
-            </div>
-
-            <div>
-              <p className="text-sm font-bold text-zinc-950">
-                Generations of trusted service
-              </p>
-
-              <p className="mt-1 text-xs text-zinc-500">
-                Quality footwear and customer trust for over 50 years.
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.16em] text-zinc-500">
-            <span className="h-2 w-2 rounded-full bg-red-600" />
-            New styles arriving regularly
-          </div>
-        </div>
       </div>
+
     </section>
-  );
-}
-
-/* =========================================================
-   COLLECTION CARD
-========================================================= */
-
-function CollectionCard({
-  collection,
-  index,
-  navigate,
-  featured = false,
-}) {
-  return (
-    <article
-      className={`group relative overflow-hidden rounded-[2rem] bg-zinc-900 ${
-        featured
-          ? "min-h-[560px] lg:min-h-[620px]"
-          : "min-h-[280px] sm:min-h-[300px]"
-      }`}
-    >
-      {/* Image */}
-      <img
-        src={collection.image?.url}
-        alt={collection.title}
-        className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
-      />
-
-      {/* Overlay */}
-      <div
-        className={`absolute inset-0 ${
-          featured
-            ? "bg-gradient-to-t from-black via-black/45 to-black/5"
-            : "bg-gradient-to-r from-black/85 via-black/35 to-transparent"
-        }`}
-      />
-
-      {/* Decorative top number */}
-      <div className="absolute left-7 top-7 flex items-center gap-3">
-        <span className="font-['Outfit'] text-xs font-bold tracking-[0.2em] text-white/60">
-          0{index + 1}
-        </span>
-
-        <span className="h-px w-9 bg-red-500" />
-
-        <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/70">
-          Collection
-        </span>
-      </div>
-
-      {/* Content */}
-      <div
-        className={`absolute z-10 ${
-          featured
-            ? "bottom-0 left-0 right-0 p-7 sm:p-10"
-            : "inset-y-0 left-0 flex max-w-[70%] flex-col justify-end p-7 sm:p-8"
-        }`}
-      >
-        <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.22em] text-red-400">
-          Discover the collection
-        </p>
-
-        <h3
-          className={`font-['Outfit'] font-extrabold leading-tight tracking-[-0.04em] text-white ${
-            featured
-              ? "text-4xl sm:text-5xl"
-              : "text-2xl sm:text-3xl"
-          }`}
-        >
-          {collection.title}
-        </h3>
-
-        <p
-          className={`mt-3 leading-6 text-white/70 ${
-            featured
-              ? "max-w-lg text-sm sm:text-base"
-              : "text-sm"
-          }`}
-        >
-          {collection.subtitle ||
-            "Discover footwear designed for comfort, confidence and every journey."}
-        </p>
-
-        <button
-          onClick={() => navigate(collection.buttonLink)}
-          className="mt-6 inline-flex w-fit items-center gap-3 rounded-full bg-white px-5 py-3 text-sm font-bold text-zinc-950 shadow-lg transition-all duration-300 hover:-translate-y-1 hover:bg-red-600 hover:text-white hover:shadow-red-600/30"
-        >
-          {collection.buttonText || "Explore Collection"}
-
-          <span className="flex h-7 w-7 items-center justify-center rounded-full bg-zinc-950 text-sm text-white transition-transform duration-300 group-hover:translate-x-1">
-            →
-          </span>
-        </button>
-      </div>
-
-      {/* Bottom red progress line */}
-      <div className="absolute bottom-0 left-0 h-1 w-0 bg-red-600 transition-all duration-700 group-hover:w-full" />
-    </article>
   );
 }
 
