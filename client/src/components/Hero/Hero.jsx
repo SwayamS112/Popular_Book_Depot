@@ -1,12 +1,24 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
+import {
+  Truck,
+  RotateCcw,
+  ShieldCheck,
+  PhoneCall,
+  Sparkles,
+  ArrowUpRight,
+} from "lucide-react";
+
 import API_BASE from "../../config/api.js";
 
 const defaultHero = {
   badge: "STEP INTO A BETTER YOU",
+
   title: "FOOTWEAR",
+
   highlight: "FOR EVERY MOVE",
+
   description:
     "From everyday comfort to standout style — find your perfect pair at Popular Book Depot.",
 
@@ -119,7 +131,7 @@ function Hero() {
   }
 
   /* =========================================================
-     HERO DISABLED FROM ADMIN
+     HERO DISABLED
   ========================================================= */
 
   if (!hero.isActive) {
@@ -130,7 +142,7 @@ function Hero() {
     <section className="relative isolate overflow-hidden bg-zinc-950">
 
       {/* =====================================================
-          HERO BACKGROUND IMAGE
+          HERO IMAGE
       ===================================================== */}
 
       <div className="absolute inset-0">
@@ -145,164 +157,123 @@ function Hero() {
           <div className="h-full w-full bg-gradient-to-br from-zinc-950 via-zinc-800 to-zinc-950" />
         )}
 
-        {/* Overall image darkening */}
+        {/* Main dark overlay */}
 
-        <div className="absolute inset-0 bg-black/25" />
+        <div className="absolute inset-0 bg-black/30" />
 
-        {/* Left text readability */}
+        {/* Strong left readability */}
 
-        <div className="absolute inset-0 bg-gradient-to-r from-black/90 via-black/65 via-45% to-black/10" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/95 via-black/70 via-45% to-black/15" />
+
+        {/* Right subtle overlay */}
+
+        <div className="absolute right-0 top-0 h-full w-[45%] bg-gradient-to-l from-black/20 to-transparent" />
 
         {/* Bottom fade */}
 
-        <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-black/45 to-transparent" />
+        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-black/55 to-transparent" />
 
       </div>
 
       {/* =====================================================
-          MAIN HERO CONTAINER
+          MAIN HERO
       ===================================================== */}
 
-      <div className="relative mx-auto flex min-h-[430px] max-w-[1480px] items-center px-6 py-12 sm:px-8 lg:min-h-[470px] lg:px-10 xl:px-14">
+      <div className="relative mx-auto min-h-[430px] max-w-[1480px] px-6 py-10 sm:px-8 lg:min-h-[470px] lg:px-10 xl:px-14">
 
         {/* ===================================================
             LEFT CONTENT
         =================================================== */}
 
-        <div className="relative z-20 max-w-[650px]">
+        <div className="relative z-20 flex min-h-[390px] items-center">
 
-          {/* EYEBROW */}
+          <div className="max-w-[650px]">
 
-          <div className="hero-reveal">
+            {/* EYEBROW */}
 
-            <p className="flex items-center gap-3 text-[9px] font-bold uppercase tracking-[0.27em] text-red-400 sm:text-[10px]">
+            <div className="hero-reveal">
 
-              <span className="h-[1px] w-8 bg-red-500 sm:w-10" />
+              <p className="flex items-center gap-3 text-[9px] font-bold uppercase tracking-[0.28em] text-red-400 sm:text-[10px]">
 
-              {hero.badge}
+                <span className="h-[1px] w-9 bg-red-500 sm:w-10" />
 
-            </p>
-
-          </div>
-
-          {/* =================================================
-              TITLE
-          ================================================= */}
-
-          <div className="hero-reveal hero-reveal-delay-1 mt-4 sm:mt-5">
-
-            <h1 className="font-['Outfit'] text-[clamp(3.2rem,6.4vw,6.3rem)] font-extrabold uppercase leading-[0.86] tracking-[-0.065em] text-white">
-
-              {hero.title}
-
-              {hero.highlight && (
-                <span className="block text-white">
-                  {hero.highlight}
-                </span>
-              )}
-
-            </h1>
-
-          </div>
-
-          {/* =================================================
-              DESCRIPTION
-          ================================================= */}
-
-          {hero.description && (
-            <div className="hero-reveal hero-reveal-delay-2">
-
-              <p className="mt-5 max-w-[500px] text-[13px] leading-[1.65] text-white/80 sm:mt-6 sm:text-sm sm:leading-6">
-
-                {hero.description}
+                {hero.badge}
 
               </p>
 
             </div>
-          )}
 
-          {/* =================================================
-              BUTTONS
-          ================================================= */}
+            {/* TITLE */}
 
-          <div className="hero-reveal hero-reveal-delay-3 mt-6 flex flex-wrap items-center gap-3">
+            <div className="hero-reveal hero-reveal-delay-1 mt-4 sm:mt-5">
 
-            {/* PRIMARY */}
+              <h1 className="font-['Outfit'] text-[clamp(3.2rem,6.4vw,6.3rem)] font-extrabold uppercase leading-[0.86] tracking-[-0.065em] text-white">
 
-            {hero.primaryButton?.text && (
-              <Link
-                to={
-                  hero.primaryButton.link ||
-                  "/products/men"
-                }
-                className="group inline-flex min-h-[45px] items-center gap-3 rounded-full bg-white px-4 pl-5 text-[11px] font-bold text-zinc-950 shadow-xl transition-all duration-300 hover:-translate-y-1 hover:bg-red-600 hover:text-white hover:shadow-2xl sm:min-h-[48px] sm:gap-4 sm:pl-6 sm:text-xs"
-              >
+                {hero.title}
 
-                <span>
-                  {hero.primaryButton.text}
-                </span>
+                {hero.highlight && (
+                  <span className="block">
+                    {hero.highlight}
+                  </span>
+                )}
 
-                <span className="flex h-7 w-7 items-center justify-center rounded-full bg-zinc-950 text-sm text-white transition-all duration-300 group-hover:translate-x-1 group-hover:bg-white group-hover:text-zinc-950">
-                  →
-                </span>
+              </h1>
 
-              </Link>
+            </div>
+
+            {/* DESCRIPTION */}
+
+            {hero.description && (
+              <div className="hero-reveal hero-reveal-delay-2">
+
+                <p className="mt-5 max-w-[500px] text-[13px] leading-[1.65] text-white/80 sm:mt-6 sm:text-sm sm:leading-6">
+                  {hero.description}
+                </p>
+
+              </div>
             )}
 
-            {/* SECONDARY */}
+            {/* BUTTONS */}
 
-            {hero.secondaryButton?.text && (
-              <Link
-                to={
-                  hero.secondaryButton.link ||
-                  "/products/women"
-                }
-                className="group inline-flex min-h-[45px] items-center gap-2 rounded-full border border-white/40 bg-white/10 px-5 text-[11px] font-bold text-white backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-white hover:bg-white hover:text-zinc-950 sm:min-h-[48px] sm:px-6 sm:text-xs"
-              >
+            <div className="hero-reveal hero-reveal-delay-3 mt-6 flex flex-wrap items-center gap-3">
 
-                {hero.secondaryButton.text}
+              {hero.primaryButton?.text && (
+                <Link
+                  to={
+                    hero.primaryButton.link ||
+                    "/products/men"
+                  }
+                  className="group inline-flex min-h-[46px] items-center gap-3 rounded-full bg-white px-4 pl-5 text-[11px] font-bold text-zinc-950 shadow-xl transition-all duration-300 hover:-translate-y-1 hover:bg-red-600 hover:text-white hover:shadow-2xl sm:min-h-[48px] sm:gap-4 sm:pl-6 sm:text-xs"
+                >
 
-                <span className="transition-transform duration-300 group-hover:translate-x-1">
-                  →
-                </span>
+                  <span>
+                    {hero.primaryButton.text}
+                  </span>
 
-              </Link>
-            )}
+                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-zinc-950 text-white transition-all duration-300 group-hover:translate-x-1 group-hover:bg-white group-hover:text-zinc-950">
+                    →
+                  </span>
 
-          </div>
+                </Link>
+              )}
 
-        </div>
+              {hero.secondaryButton?.text && (
+                <Link
+                  to={
+                    hero.secondaryButton.link ||
+                    "/products/women"
+                  }
+                  className="group inline-flex min-h-[46px] items-center gap-2 rounded-full border border-white/40 bg-white/10 px-5 text-[11px] font-bold text-white backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-white hover:bg-white hover:text-zinc-950 sm:min-h-[48px] sm:px-6 sm:text-xs"
+                >
 
-        {/* ===================================================
-            RIGHT SIDE — GOOD SHOES / BRIGHTER DAYS
-        =================================================== */}
+                  {hero.secondaryButton.text}
 
-        <div className="pointer-events-none absolute right-5 top-1/2 z-20 hidden -translate-y-1/2 lg:right-8 lg:block xl:right-12">
+                  <span className="transition-transform duration-300 group-hover:translate-x-1">
+                    →
+                  </span>
 
-          <div className="flex flex-col items-end">
-
-            <p className="font-['Outfit'] text-[23px] font-medium italic leading-[1.05] text-white/85 xl:text-[27px]">
-
-              Good
-              <br />
-
-              Shoes
-              <br />
-
-              Brighter
-              <br />
-
-              Days
-
-            </p>
-
-            {/* Handwritten-style underline */}
-
-            <div className="relative mt-4 h-4 w-16">
-
-              <span className="absolute right-0 top-1 h-px w-14 rotate-[-7deg] bg-white/70" />
-
-              <span className="absolute right-3 top-3 h-px w-9 rotate-[5deg] bg-white/50" />
+                </Link>
+              )}
 
             </div>
 
@@ -311,24 +282,132 @@ function Hero() {
         </div>
 
         {/* ===================================================
-            SMALL TRUST LABEL
+            RIGHT SIDE — NEW HERITAGE PANEL
         =================================================== */}
 
-        <div className="hero-floating-card absolute bottom-16 right-7 z-20 hidden lg:block xl:right-12">
+        <div className="pointer-events-none absolute inset-y-8 right-5 z-30 hidden items-center lg:flex xl:right-10">
 
-          <div className="rounded-xl border border-white/20 bg-black/35 px-4 py-3 backdrop-blur-md">
+          <div className="hero-floating-card relative h-[350px] w-[205px] overflow-hidden rounded-[28px] border border-white/15 bg-[#171717]/92 shadow-[0_30px_80px_rgba(0,0,0,0.45)] backdrop-blur-xl xl:h-[365px] xl:w-[225px]">
 
-            <p className="text-[7px] font-bold uppercase tracking-[0.2em] text-white/55">
-              Trusted Since
-            </p>
+            {/* =================================================
+                DECORATIVE RED CIRCLE
+            ================================================= */}
 
-            <p className="mt-1 font-['Outfit'] text-xl font-extrabold leading-none text-white">
-              {hero.stats?.[0]?.value || "50+"}
-            </p>
+            <div className="absolute -right-16 -top-16 h-40 w-40 rounded-full bg-red-600/20" />
 
-            <p className="mt-1 text-[8px] text-white/60">
-              Years of Trust
-            </p>
+            <div className="absolute -right-10 -top-10 h-28 w-28 rounded-full border border-red-500/20" />
+
+            {/* =================================================
+                CARD CONTENT
+            ================================================= */}
+
+            <div className="relative flex h-full flex-col p-5 xl:p-6">
+
+              {/* TOP BRAND LINE */}
+
+              <div className="flex items-center justify-between">
+
+                <div className="flex items-center gap-2">
+
+                  <span className="h-[2px] w-7 bg-red-500" />
+
+                  <span className="text-[7px] font-bold uppercase tracking-[0.24em] text-white/45">
+                    Popular Heritage
+                  </span>
+
+                </div>
+
+                <Sparkles
+                  size={13}
+                  className="text-red-500"
+                  strokeWidth={1.7}
+                />
+
+              </div>
+
+              {/* 50+ */}
+
+              <div className="mt-7">
+
+                <p className="text-[8px] font-bold uppercase tracking-[0.26em] text-white/40">
+                  Trusted Since
+                </p>
+
+                <p className="mt-1 font-['Outfit'] text-[55px] font-extrabold leading-none tracking-[-0.07em] text-white xl:text-[62px]">
+                  {hero.stats?.[0]?.value || "50+"}
+                </p>
+
+                <p className="mt-1 text-[9px] font-medium uppercase tracking-[0.16em] text-white/45">
+                  Years of Trust
+                </p>
+
+              </div>
+
+              {/* DIVIDER */}
+
+              <div className="my-5 h-px bg-white/10" />
+
+              {/* BRAND MESSAGE */}
+
+              <div>
+
+                <p className="font-['Outfit'] text-[27px] font-semibold italic leading-[0.94] tracking-[-0.04em] text-[#f5f0e8] xl:text-[30px]">
+
+                  Good
+                  <br />
+
+                  Shoes
+                  <br />
+
+                  <span className="text-red-500">
+                    Brighter
+                  </span>
+                  <br />
+
+                  Days
+
+                </p>
+
+              </div>
+
+              {/* DECORATIVE LINES */}
+
+              <div className="relative mt-4 h-5 w-20">
+
+                <span className="absolute left-0 top-1 h-[2px] w-16 rotate-[-6deg] bg-white/70" />
+
+                <span className="absolute left-4 top-3 h-[2px] w-11 rotate-[4deg] bg-red-500" />
+
+              </div>
+
+              {/* BOTTOM QUALITY BADGE */}
+
+              <div className="mt-auto flex items-center justify-between rounded-2xl border border-white/10 bg-white/[0.06] px-3 py-3">
+
+                <div>
+
+                  <p className="text-[7px] font-bold uppercase tracking-[0.18em] text-white/40">
+                    Our Promise
+                  </p>
+
+                  <p className="mt-1 text-[8px] font-semibold uppercase tracking-[0.12em] text-white">
+                    Quality • Comfort
+                  </p>
+
+                </div>
+
+                <div className="flex h-7 w-7 items-center justify-center rounded-full bg-red-600">
+
+                  <ArrowUpRight
+                    size={13}
+                    className="text-white"
+                  />
+
+                </div>
+
+              </div>
+
+            </div>
 
           </div>
 
@@ -337,10 +416,10 @@ function Hero() {
       </div>
 
       {/* =====================================================
-          BOTTOM TRUST / FEATURE STRIP
+          PREMIUM BENEFITS BAR
       ===================================================== */}
 
-      <div className="relative border-t border-white/10 bg-[#f8f6f2]">
+      <div className="relative border-t border-zinc-200 bg-[#faf8f4]">
 
         <div className="mx-auto grid max-w-[1480px] grid-cols-2 lg:grid-cols-4">
 
@@ -348,19 +427,26 @@ function Hero() {
               FREE SHIPPING
           ================================================= */}
 
-          <div className="flex min-h-[70px] items-center gap-3 border-zinc-200 px-5 py-3 lg:border-r lg:px-7">
+          <div className="group flex min-h-[88px] items-center gap-3 border-b border-zinc-200 px-5 py-4 transition-all duration-300 hover:bg-white lg:border-b-0 lg:border-r lg:px-7">
 
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center text-[22px] text-zinc-950">
-              🚚
+            <div className="relative flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-red-50 text-red-600 transition-all duration-300 group-hover:-translate-y-1 group-hover:bg-red-600 group-hover:text-white">
+
+              <Truck
+                size={21}
+                strokeWidth={1.8}
+              />
+
+              <span className="absolute -right-1 -top-1 h-2 w-2 rounded-full bg-red-500" />
+
             </div>
 
             <div>
 
-              <p className="text-[11px] font-bold text-zinc-950 sm:text-xs">
+              <p className="text-[11px] font-extrabold uppercase tracking-[0.04em] text-zinc-950 sm:text-xs">
                 Free Shipping
               </p>
 
-              <p className="mt-0.5 text-[9px] leading-4 text-zinc-500 sm:text-[10px]">
+              <p className="mt-1 text-[9px] leading-4 text-zinc-500 sm:text-[10px]">
                 On orders above ₹999
               </p>
 
@@ -372,19 +458,24 @@ function Hero() {
               EASY RETURNS
           ================================================= */}
 
-          <div className="flex min-h-[70px] items-center gap-3 border-zinc-200 px-5 py-3 lg:border-r lg:px-7">
+          <div className="group flex min-h-[88px] items-center gap-3 border-b border-zinc-200 px-5 py-4 transition-all duration-300 hover:bg-white lg:border-b-0 lg:border-r lg:px-7">
 
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center text-[22px] text-zinc-950">
-              ↻
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-zinc-100 text-zinc-900 transition-all duration-300 group-hover:-translate-y-1 group-hover:bg-zinc-950 group-hover:text-white">
+
+              <RotateCcw
+                size={20}
+                strokeWidth={1.8}
+              />
+
             </div>
 
             <div>
 
-              <p className="text-[11px] font-bold text-zinc-950 sm:text-xs">
+              <p className="text-[11px] font-extrabold uppercase tracking-[0.04em] text-zinc-950 sm:text-xs">
                 Easy Returns
               </p>
 
-              <p className="mt-0.5 text-[9px] leading-4 text-zinc-500 sm:text-[10px]">
+              <p className="mt-1 text-[9px] leading-4 text-zinc-500 sm:text-[10px]">
                 Hassle-free within 7 days
               </p>
 
@@ -396,19 +487,24 @@ function Hero() {
               SECURE PAYMENTS
           ================================================= */}
 
-          <div className="flex min-h-[70px] items-center gap-3 border-zinc-200 px-5 py-3 lg:border-r lg:px-7">
+          <div className="group flex min-h-[88px] items-center gap-3 border-b border-zinc-200 px-5 py-4 transition-all duration-300 hover:bg-white lg:border-b-0 lg:border-r lg:px-7">
 
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center text-[22px] text-zinc-950">
-              ◈
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-red-50 text-red-600 transition-all duration-300 group-hover:-translate-y-1 group-hover:bg-red-600 group-hover:text-white">
+
+              <ShieldCheck
+                size={21}
+                strokeWidth={1.8}
+              />
+
             </div>
 
             <div>
 
-              <p className="text-[11px] font-bold text-zinc-950 sm:text-xs">
+              <p className="text-[11px] font-extrabold uppercase tracking-[0.04em] text-zinc-950 sm:text-xs">
                 Secure Payments
               </p>
 
-              <p className="mt-0.5 text-[9px] leading-4 text-zinc-500 sm:text-[10px]">
+              <p className="mt-1 text-[9px] leading-4 text-zinc-500 sm:text-[10px]">
                 100% secure & trusted
               </p>
 
@@ -420,19 +516,24 @@ function Hero() {
               CUSTOMER SUPPORT
           ================================================= */}
 
-          <div className="flex min-h-[70px] items-center gap-3 px-5 py-3 lg:px-7">
+          <div className="group flex min-h-[88px] items-center gap-3 px-5 py-4 transition-all duration-300 hover:bg-white lg:px-7">
 
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center text-[22px] text-zinc-950">
-              ☎
+            <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-zinc-100 text-zinc-900 transition-all duration-300 group-hover:-translate-y-1 group-hover:bg-zinc-950 group-hover:text-white">
+
+              <PhoneCall
+                size={20}
+                strokeWidth={1.8}
+              />
+
             </div>
 
             <div>
 
-              <p className="text-[11px] font-bold text-zinc-950 sm:text-xs">
+              <p className="text-[11px] font-extrabold uppercase tracking-[0.04em] text-zinc-950 sm:text-xs">
                 Customer Support
               </p>
 
-              <p className="mt-0.5 text-[9px] leading-4 text-zinc-500 sm:text-[10px]">
+              <p className="mt-1 text-[9px] leading-4 text-zinc-500 sm:text-[10px]">
                 We're here to help
               </p>
 
