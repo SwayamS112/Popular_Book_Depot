@@ -60,43 +60,85 @@ const createHomeSection = async (req, res, next) => {
       buttonText,
       buttonLink,
       products,
+      items,
       order,
       isActive,
     } = req.body;
 
+    // ------------------------------------------
+    // VALIDATION
+    // ------------------------------------------
+
     if (!sectionKey || !title) {
       res.status(400);
+
       throw new Error(
         "Section key and title are required"
       );
     }
+
+    // ------------------------------------------
+    // CHECK DUPLICATE SECTION KEY
+    // ------------------------------------------
 
     const existingSection =
       await HomeSection.findOne({ sectionKey });
 
     if (existingSection) {
       res.status(400);
+
       throw new Error(
         "A home section with this key already exists"
       );
     }
 
+    // ------------------------------------------
+    // CREATE SECTION
+    // ------------------------------------------
+
     const section = await HomeSection.create({
       sectionKey,
       title,
-      subtitle,
-      image,
-      buttonText,
-      buttonLink,
-      products: products || [],
-      order: order !== undefined ? order : 0,
+      subtitle: subtitle || "",
+
+      image: image || {
+        url: "",
+        publicId: "",
+      },
+
+      buttonText:
+        buttonText !== undefined
+          ? buttonText
+          : "Explore",
+
+      buttonLink: buttonLink || "",
+
+      products: Array.isArray(products)
+        ? products
+        : [],
+
+      // NEW:
+      // Used by Shop By Category
+      // and Every Moment
+      items: Array.isArray(items)
+        ? items
+        : [],
+
+      order:
+        order !== undefined
+          ? Number(order)
+          : 0,
+
       isActive:
-        isActive !== undefined ? isActive : true,
+        isActive !== undefined
+          ? Boolean(isActive)
+          : true,
     });
 
     res.status(201).json({
       success: true,
-      message: "Home section created successfully",
+      message:
+        "Home section created successfully",
       section,
     });
   } catch (error) {
@@ -107,7 +149,11 @@ const createHomeSection = async (req, res, next) => {
 // ==========================================
 // UPDATE HOME SECTION - ADMIN
 // ==========================================
-const updateHomeSection = async (req, res, next) => {
+const updateHomeSection = async (
+  req,
+  res,
+  next
+) => {
   try {
     const section = await HomeSection.findById(
       req.params.id
@@ -115,8 +161,15 @@ const updateHomeSection = async (req, res, next) => {
 
     if (!section) {
       res.status(404);
-      throw new Error("Home section not found");
+
+      throw new Error(
+        "Home section not found"
+      );
     }
+
+    // ------------------------------------------
+    // EXISTING + NEW ALLOWED FIELDS
+    // ------------------------------------------
 
     const allowedFields = [
       "title",
@@ -125,9 +178,17 @@ const updateHomeSection = async (req, res, next) => {
       "buttonText",
       "buttonLink",
       "products",
+
+      // NEW
+      "items",
+
       "order",
       "isActive",
     ];
+
+    // ------------------------------------------
+    // UPDATE ONLY PROVIDED FIELDS
+    // ------------------------------------------
 
     allowedFields.forEach((field) => {
       if (req.body[field] !== undefined) {
@@ -135,11 +196,13 @@ const updateHomeSection = async (req, res, next) => {
       }
     });
 
-    const updatedSection = await section.save();
+    const updatedSection =
+      await section.save();
 
     res.status(200).json({
       success: true,
-      message: "Home section updated successfully",
+      message:
+        "Home section updated successfully",
       section: updatedSection,
     });
   } catch (error) {
@@ -150,7 +213,11 @@ const updateHomeSection = async (req, res, next) => {
 // ==========================================
 // DELETE HOME SECTION - ADMIN
 // ==========================================
-const deleteHomeSection = async (req, res, next) => {
+const deleteHomeSection = async (
+  req,
+  res,
+  next
+) => {
   try {
     const section = await HomeSection.findById(
       req.params.id
@@ -158,14 +225,18 @@ const deleteHomeSection = async (req, res, next) => {
 
     if (!section) {
       res.status(404);
-      throw new Error("Home section not found");
+
+      throw new Error(
+        "Home section not found"
+      );
     }
 
     await section.deleteOne();
 
     res.status(200).json({
       success: true,
-      message: "Home section deleted successfully",
+      message:
+        "Home section deleted successfully",
     });
   } catch (error) {
     next(error);

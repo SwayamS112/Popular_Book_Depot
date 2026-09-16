@@ -36,8 +36,8 @@ function HomePage() {
   return (
     <>
       <Hero />
-      <ShopByCategory />
       <PopularCollection />
+      <ShopByCategory />
        <WhyChooseUs />
       <EveryMoment />
     </>
