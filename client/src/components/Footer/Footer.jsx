@@ -45,7 +45,7 @@ function Footer() {
             <div className="inline-flex flex-col">
 
               <div className="font-['Outfit'] text-[29px] font-extrabold leading-none tracking-[-0.06em] text-white sm:text-[32px]">
-                POPULAR
+                POPULAR BOOK DEPOT
               </div>
 
               <div className="mt-1 flex items-center gap-2">
@@ -53,7 +53,7 @@ function Footer() {
                 <span className="h-[8px] w-[40px] bg-red-600" />
 
                 <span className="text-[8px] font-medium tracking-[0.24em] text-white/60">
-                  FOOTWEAR
+                  FOOTWEAR BUSINESS
                 </span>
 
               </div>

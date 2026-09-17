@@ -325,14 +325,14 @@ function Header() {
           >
             <div className="leading-none">
               <p className="font-['Outfit'] text-[20px] font-extrabold tracking-[-0.055em] text-zinc-950 transition-colors duration-200 group-hover:text-zinc-800 sm:text-[21px]">
-                POPULAR
+                POPULAR BOOK DEPOT
               </p>
 
               <div className="mt-[4px] flex items-center gap-1.5">
                 <span className="h-[3px] w-7 bg-red-600 transition-all duration-300 group-hover:w-9 sm:w-8 sm:group-hover:w-10" />
 
                 <p className="text-[7px] font-bold tracking-[0.28em] text-zinc-500 sm:text-[8px]">
-                  FOOTWEAR
+                  FOOTWEAR BUSINESS
                 </p>
               </div>
             </div>
@@ -1040,14 +1040,14 @@ function Header() {
           >
             <div className="leading-none">
               <p className="font-['Outfit'] text-[21px] font-extrabold tracking-[-0.055em] text-zinc-950">
-                POPULAR
+                POPULAR BOOK DEPOT
               </p>
 
               <div className="mt-[4px] flex items-center gap-1.5">
                 <span className="h-[3px] w-8 bg-red-600" />
 
                 <p className="text-[8px] font-bold tracking-[0.28em] text-zinc-500">
-                  FOOTWEAR
+                  FOOTWEAR BUSINESS 
                 </p>
               </div>
             </div>
