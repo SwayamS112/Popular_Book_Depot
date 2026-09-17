@@ -501,11 +501,11 @@ function Hero() {
             <div>
 
               <p className="text-[11px] font-extrabold uppercase tracking-[0.04em] text-zinc-950 sm:text-xs">
-                Secure Payments
+                50+ Years of Experience   
               </p>
 
               <p className="mt-1 text-[9px] leading-4 text-zinc-500 sm:text-[10px]">
-                100% secure & trusted
+                A legacy built on quality & comfort
               </p>
 
             </div>

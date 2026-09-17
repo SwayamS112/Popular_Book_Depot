@@ -144,11 +144,11 @@ function Footer() {
               <div className="text-[12px] leading-[1.6] text-white/75 sm:text-[13px]">
 
                 <p>
-                  Main Market, Your Area
+                  Main Market, Popular Book Depot
                 </p>
 
                 <p>
-                  City, State - PIN
+                  Sujanpur Tira, Himachal Pradesh - 176110
                 </p>
 
               </div>
